@@ -1,0 +1,8 @@
+<?php
+
+namespace App\Repositories;
+
+class {{ class }} extends AbstractRepository
+{
+    // Repository Methods Here
+}

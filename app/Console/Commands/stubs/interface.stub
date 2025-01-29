@@ -1,0 +1,8 @@
+<?php
+
+namespace App\Repositories\Interfaces;
+
+interface {{ class }} extends AbstractRepositoryInterface
+{
+    // Interface Methods Here
+}
