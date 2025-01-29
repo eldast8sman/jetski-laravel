@@ -28,4 +28,4 @@ php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
 php artisan storage:link
-php artisan db:seed
+php artisan db:seed --force
