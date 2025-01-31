@@ -23,9 +23,9 @@ sudo chown -R webapp:webapp storage bootstrap/cache
 sudo chmod -R 775 storage bootstrap/cache
 
 # Run Laravel Artisan commands
-php artisan migrate:refresh --force
+php artisan migrate --force
 php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
 php artisan storage:link
-php artisan db:seed --force
+# php artisan db:seed --force
