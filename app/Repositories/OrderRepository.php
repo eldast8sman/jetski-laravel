@@ -182,10 +182,10 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
             }
         }
 
-        if(!empty(auth()->user()->parent_id)){
-            $wallet = Wallet::where('user_id', auth()->user()->parent_id)->first();
+        if(!empty(auth('user-api')->user()->parent_id)){
+            $wallet = Wallet::where('user_id', auth('user-api')->user()->parent_id)->first();
         } else {
-            $wallet = Wallet::where('user_id', auth()->user()->id)->first();
+            $wallet = Wallet::where('user_id', auth('user-api')->user()->id)->first();
         }
 
         $wallet->balance -= $amount + ($data['tip_amount'] ?? 0);

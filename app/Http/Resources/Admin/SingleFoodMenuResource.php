@@ -28,8 +28,8 @@ class SingleFoodMenuResource extends JsonResource
             'details' => $this->details,
             'is_stand_alone' => $this->is_stand_alone,
             'is_add_on' => $this->is_add_on,
-            'add_ons' => ($this->add_ons()->count() > 0) ? MenuAddOnResource::collection($this->add_ons()->get()) : null,
-            'photos' => MenuPhotoResource::collection($this->photos)
+            'add_ons' => !empty($this->add_ons()) ? MenuAddOnResource::collection($this->add_ons()->get()) : null,
+            'photos' => ($this->photos()->count() > 0) ? MenuPhotoResource::collection($this->photos) : null
         ];
     }
 }
