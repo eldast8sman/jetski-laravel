@@ -13,6 +13,9 @@ class OrderCartItemObserver
      */
     public function created(OrderCartItem $item): void
     {
+        if(!empty($item->order_cart_id)){
+            return;
+        }
         $user = $item->user;
         $order = OrderCart::where('user_id', $user->id)->where('open', 1)->first();
         if(empty($order)){

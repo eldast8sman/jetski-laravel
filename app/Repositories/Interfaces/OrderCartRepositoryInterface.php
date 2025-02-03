@@ -15,4 +15,6 @@ interface OrderCartRepositoryInterface extends AbstractRepositoryInterface
     public function user_index($limit=10);
 
     public function show($uuid);
+
+    public function change_status($uuid, $status);
 }

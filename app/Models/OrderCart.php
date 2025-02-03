@@ -30,6 +30,7 @@ class OrderCart extends Model
         'open',
         'order_by_type',
         'order_by_id',
+        'time_ordered'
     ];
 
     public function user()

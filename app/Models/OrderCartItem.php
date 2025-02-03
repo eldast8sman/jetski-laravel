@@ -33,4 +33,25 @@ class OrderCartItem extends Model
     {
         return $this->belongsTo(FoodMenu::class);
     }
+
+    public function sorted_add_ons($type='user')
+    {
+        $return = [];
+        if(empty($this->add_ons)){
+            return null;
+        }
+        $add_ons = json_decode($this->add_ons, true);
+        foreach($add_ons as $add_on){
+            $menu = FoodMenu::find($add_on['id']);
+            if(!empty($menu)){
+                $return[] = [
+                    'identifier' => ($type == 'user') ? $menu->slug : $menu->uuid,
+                    'name' => $menu->name,
+                    'unit_price' => $add_on['unit_price'],
+                    'total_price' => $add_on['total_price'],
+                ];
+            }
+        }
+        return $return;
+    }
 }

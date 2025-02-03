@@ -58,7 +58,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
             $sel_items[] = [
                 'ItemID' => $menu->g5_id,
                 'Quantity' => $item->quantity,
-                'UsedPrice' => $item->unit_price * $item->quantity,
+                'UsedPrice' => $item->unit_price,
                 'CustomerNumber' => $user->g5_id,
                 'AffectedItem' => 0,
                 'VoidReasonID' => 0,
@@ -79,7 +79,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
                     $sel_items[] = [
                         'ItemID' => $addOn->g5_id,
                         'Quantity' => $add_on->quantity,
-                        'UsedPrice' => $add_on->total_price,
+                        'UsedPrice' => $add_on->unit_price,
                         'CustomerNumber' => $user->g5_id,
                         'AffectedItem' => 0,
                         'VoidReasonID' => 0,
@@ -167,7 +167,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
 
         parent::__construct(new OrderTracker());
         $this->create([
-            'order_cart_id',
+            'order_cart_id' => $confirm->id,
             'status' => 'Pending',
             'agent_type' => 'user',
             'agent_id' => auth('user-api')->user()->id
@@ -188,9 +188,64 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
 
         parent::__construct(new OrderTracker());
         $this->create([
-            'order_cart_id',
+            'order_cart_id' => $order->id,
             'status' => 'Pending',
-            'agent_type' => 'user',
+            'agent_type' => 'admin',
+            'agent_id' => auth('user-api')->user()->id
+        ]);
+
+        return $order;
+    }
+
+    public function index($limit = 10, $search = "")
+    {
+        $criteria = [
+            ['status', '!=', 'Delivered']
+        ];
+        if(!empty($search)){
+            $criteria[] = ['order_number', 'like', '%'.$search.'%'];
+        }
+        $orderBy = [
+            ['created_at', 'asc']
+        ];
+
+        $orders = $this->findBy($criteria, $orderBy, $limit);
+        return $orders;
+    }
+
+    public function user_index($limit = 10)
+    {
+        $criteria = [
+            ['user_id', '=', auth('user-api')->user()->id],
+            ['status', '!=', 'Delivered']
+        ];
+        $orderBy = [
+            ['created_at', 'asc']
+        ];
+        $orders = $this->findBy($criteria, $orderBy, $limit);
+        return $orders;
+    }
+
+    public function show($uuid){
+        return $this->findByUuid($uuid);
+    }
+
+    public function change_status($uuid, $status)
+    {
+        $order = $this->findByUuid($uuid);
+        if(empty($order)){
+            $this->errors = "No Order was fetched";
+            return false;
+        }
+
+        $order->status = $status;
+        $order->save();
+
+        parent::__construct(new OrderTracker());
+        $this->create([
+            'order_cart_id',
+            'status' => $status,
+            'agent_type' => 'admin',
             'agent_id' => auth('user-api')->user()->id
         ]);
 

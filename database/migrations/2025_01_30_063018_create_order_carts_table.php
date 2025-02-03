@@ -37,6 +37,7 @@ return new class extends Migration
             $table->boolean('open')->default(true);
             $table->string('order_by_type')->default('user');
             $table->integer('order_by_id')->nullable();
+            $table->dateTime('time_ordered')->nullable();
             $table->timestamps();
         });
     }
