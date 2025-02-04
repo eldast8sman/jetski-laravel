@@ -21,6 +21,7 @@ use App\Http\Controllers\FoodMenuController as ControllersFoodMenuController;
 use App\Http\Controllers\MembershipController as ControllersMembershipController;
 use App\Http\Controllers\MenuController as ControllersMenuController;
 use App\Http\Controllers\NotificationImageController;
+use App\Http\Controllers\OrderCartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RelativeController;
@@ -204,6 +205,16 @@ Route::prefix('user')->group(function(){
                 Route::get('/past', 'past_orders')->name('user.order.past');
                 Route::post('/', 'store')->name('user.order.store');
             });
+        });
+
+        Route::prefix('carts')->controller(OrderCartController::class)->group(function(){
+            Route::get('/' , 'index')->name('user.cart.index');
+            Route::get('/{uuid}', 'show')->name('user.cart.show');
+            Route::get('/completed/orders', 'completed_orders')->name('user.cart.completed');
+            Route::post('/', 'add_item_to_cart')->name('user.cart.add');
+            Route::post('/{uuid}', 'place_order')->name('user.cart.placeOrder');
+            Route::put('/items/{uuid}', 'update_item')->name('user.cart.update');
+            Route::delete('/items/{uuid}', 'remove')->name('user.cart.remove');
         });
 
         Route::prefix('bookings')->controller(BookingController::class)->group(function(){

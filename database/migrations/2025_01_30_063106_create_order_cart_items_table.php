@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->string('uuid');
             $table->foreignIdFor(User::class, 'user_id');
-            $table->foreignIdFor(OrderCart::class, 'order_cart_id');
+            $table->foreignIdFor(OrderCart::class, 'order_cart_id')->nullable();
             $table->foreignIdFor(FoodMenu::class, 'food_menu_id');
             $table->text('add_ons')->nullable();
             $table->double('add_on_price')->default(0);

@@ -14,7 +14,8 @@ class OrderCartItemObserver
     public function created(OrderCartItem $item): void
     {
         if(!empty($item->order_cart_id)){
-            return;
+            $order = OrderCart::find($item->order_cart_id);
+            $this->update_order($order);
         }
         $user = $item->user;
         $order = OrderCart::where('user_id', $user->id)->where('open', 1)->first();

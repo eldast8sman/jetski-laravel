@@ -12,7 +12,11 @@ interface OrderCartRepositoryInterface extends AbstractRepositoryInterface
 
     public function index($limit=10, $search="");
 
+    public function completed_orders($limit=10, $search="");
+
     public function user_index($limit=10);
+
+    public function user_completed_orders($limit=10);
 
     public function show($uuid);
 

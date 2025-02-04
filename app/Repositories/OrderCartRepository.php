@@ -213,6 +213,22 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         return $orders;
     }
 
+    public function completed_orders($limit = 10, $search = "")
+    {
+        $criteria = [
+            ['status', '=', 'Delivered']
+        ];
+        if(!empty($search)){
+            $criteria[] = ['order_number', 'like', '%'.$search.'%'];
+        }
+        $orderBy = [
+            ['created_at', 'desc']
+        ];
+
+        $orders = $this->findBy($criteria, $orderBy, $limit);
+        return $orders;
+    }
+
     public function user_index($limit = 10)
     {
         $criteria = [
@@ -221,6 +237,19 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         ];
         $orderBy = [
             ['created_at', 'asc']
+        ];
+        $orders = $this->findBy($criteria, $orderBy, $limit);
+        return $orders;
+    }
+
+    public function user_completed_orders($limit = 10)
+    {
+        $criteria = [
+            ['user_id', '=', auth('user-api')->user()->id],
+            ['status', '=', 'Delivered']
+        ];
+        $orderBy = [
+            ['created_at', 'desc']
         ];
         $orders = $this->findBy($criteria, $orderBy, $limit);
         return $orders;

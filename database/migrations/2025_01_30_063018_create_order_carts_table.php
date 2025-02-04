@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('order_carts', function (Blueprint $table) {
             $table->id();
             $table->string('uuid');
-            $table->string('order_no');
+            $table->string('order_no')->nullable();
             $table->foreignIdFor(User::class, 'user_id');
             $table->string('g5_id')->nullable();
             $table->string('g5_order_number')->nullable();

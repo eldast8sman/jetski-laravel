@@ -47,6 +47,7 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
             $total_price = $total_unit_price * $data['quantity'];
             $cart_item = $this->create([
                 'uuid' => Str::uuid().'-'.time(),
+                'user_id' => $data['user_id'],
                 'food_menu_id' => $item->id,
                 'add_ons' => $add_ons,
                 'add_on_price' => $add_on_price,
@@ -72,9 +73,13 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
                 $this->errors = "Order is already processed";
                 return false;
             }
-            $item = $this->menu->findFirstBy(['uuid' => $data['uuid'], 'is_stand_alone' => 1]);
+            $item = $this->menu->show($data['identifier']);
             if(empty($item)){
                 $this->errors = "Item not found";
+                return false;
+            }
+            if($item->is_stand_alone != 1){
+                $this->errors = "Item not Stand Alone for Ordering";
                 return false;
             }
             if(!$this->check_availability($item)){
@@ -132,7 +137,10 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
 
         $item_add_ons = json_decode($item->add_ons, true);
         foreach($add_ons as $add_on){
-            $item = $this->menu->findFirstBy(['uuid' => $add_on['id'], 'is_add_on' => 1]);
+            $item = $this->menu->show($add_on['id']);
+            if($item->is_add_on != 1){
+                continue;
+            }
             if((in_array($item->id, $item_add_ons)) and ($this->check_availability($item))){
                 $addOns[] = [
                     'id' => $item->id,
