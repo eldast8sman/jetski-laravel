@@ -22,7 +22,7 @@ class UpdateFoodMenuRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'menu_category' => 'string|nullable',
+            'menu_category' => 'string|exists:menu_categories,uuid',
             'name' => 'required|string',
             'description' => 'string|nullable',
             'shelf_life_from' => 'date|nullable',

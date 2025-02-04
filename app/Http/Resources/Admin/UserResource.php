@@ -32,10 +32,10 @@ class UserResource extends JsonResource
             'photo' => $this->photo,
             'account_number' => $this->account_number,
             'wallet' => $this->wallet()->first(['uuid', 'balance']),
-            'relations' => empty($this->parent_id) ? (!empty(User::where('parent_id', $this->id)->get()) ? RelationResource::collection(User::where('parent_id', $this->id)->get()) : []) : null,
-            'membership_information' => new MembershipInformationResource($this->membership_information),
-            'watercraft' => $this->watercraft,
-            'employment_details' => $this->employment_detail,
+            'relations' => empty($this->parent_id) ? (!empty(User::where('parent_id', $this->id)->get()) ? RelationResource::collection(User::where('parent_id', $this->id)->get()) : null) : null,
+            'membership_information' => new MembershipInformationResource($this->membership_information) ?? null,
+            'watercraft' => $this->watercraft ?? null,
+            'employment_details' => $this->employment_detail ?? null,
             'status' => $this->can_use
         ];
     }

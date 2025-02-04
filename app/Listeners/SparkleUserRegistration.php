@@ -28,7 +28,7 @@ class SparkleUserRegistration implements ShouldQueue
     public function handle(UserRegistered $event): void
     {
         $user = User::find($event->user->id);
-        if((empty($user->parent_id)) and ($user->email == 'uzomad@mac.com')){
+        if(empty($user->parent_id)){
             try {
                 $service = new SparkleService();
                 $reference = "SPK_Jetski_".$user->uuid;

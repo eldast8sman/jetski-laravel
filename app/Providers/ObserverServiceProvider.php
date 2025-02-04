@@ -5,11 +5,13 @@ namespace App\Providers;
 use App\Models\Admin;
 use App\Models\Booking;
 use App\Models\Order;
-use App\Models\User;
+use App\Models\OrderCart;
+use App\Models\OrderCartItem;
 use App\Observers\AdminObserver;
 use App\Observers\BookingObserver;
+use App\Observers\OrderCartItemObserver;
+use App\Observers\OrderCartObserver;
 use App\Observers\OrderObserver;
-use App\Observers\UserObsever;
 use Illuminate\Support\ServiceProvider;
 
 class ObserverServiceProvider extends ServiceProvider
@@ -28,8 +30,9 @@ class ObserverServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Admin::observe(AdminObserver::class);
-        // User::observe(UserObsever::class);
         Booking::observe(BookingObserver::class);
         Order::observe(OrderObserver::class);
+        OrderCartItem::observe(OrderCartItemObserver::class);
+        OrderCart::observe(OrderCartObserver::class);
     }
 }

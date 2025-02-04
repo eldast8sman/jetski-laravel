@@ -25,6 +25,8 @@ use App\Repositories\Interfaces\MembershipInformationRepositoryInterface;
 use App\Repositories\Interfaces\MenuCategoryRepositoryInterface;
 use App\Repositories\Interfaces\MenuRepositoryInterface;
 use App\Repositories\Interfaces\NotificationRepositoryInterface;
+use App\Repositories\Interfaces\OrderCartItemRepositoryInterface;
+use App\Repositories\Interfaces\OrderCartRepositoryInterface;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Interfaces\UserMembershipRepositoryInterface;
 use App\Repositories\Interfaces\UserRelativeRepositoryInterface;
@@ -37,6 +39,8 @@ use App\Repositories\MembershipInformationRepository;
 use App\Repositories\MenuCategoryRepository;
 use App\Repositories\MenuRepository;
 use App\Repositories\NotificationRepository;
+use App\Repositories\OrderCartItemRepository;
+use App\Repositories\OrderCartRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\UserMembershipRepository;
 use App\Repositories\UserRelativeRepository;
@@ -74,6 +78,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(UserWatercraftRepositoryInterface::class, UserWatercraftRepository::class);
         $this->app->bind(MenuCategoryRepositoryInterface::class, MenuCategoryRepository::class);
         $this->app->bind(FoodMenuRepositoryInterface::class, FoodMenuRepository::class);
+        $this->app->bind(OrderCartItemRepositoryInterface::class, OrderCartItemRepository::class); 
+        $this->app->bind(OrderCartRepositoryInterface::class, OrderCartRepository::class);
     }
 
     /**

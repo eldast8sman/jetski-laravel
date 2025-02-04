@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Jobs\SaveOrderCartJob;
 use App\Jobs\SaveOrderJob;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -44,7 +45,7 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
             $orders = json_decode($orders, true);
 
             foreach($orders as $order){
-                SaveOrderJob::dispatch($order, $user->id);
+                SaveOrderCartJob::dispatch($order, $user);
             }
             $user->last_synced = date('Y-m-d H:i:s');
             $user->next_order_sync = date('Y-m-d H:i:s', time() + (60 * 60 * 6));
@@ -182,10 +183,10 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
             }
         }
 
-        if(!empty(auth()->user()->parent_id)){
-            $wallet = Wallet::where('user_id', auth()->user()->parent_id)->first();
+        if(!empty(auth('user-api')->user()->parent_id)){
+            $wallet = Wallet::where('user_id', auth('user-api')->user()->parent_id)->first();
         } else {
-            $wallet = Wallet::where('user_id', auth()->user()->id)->first();
+            $wallet = Wallet::where('user_id', auth('user-api')->user()->id)->first();
         }
 
         $wallet->balance -= $amount + ($data['tip_amount'] ?? 0);

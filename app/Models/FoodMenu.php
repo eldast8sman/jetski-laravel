@@ -26,6 +26,7 @@ class FoodMenu extends Model
         'ingredients',
         'details',
         'total_orders',
+        'total_sold',
         'parent_id',
         'modifier_id',
         'is_stand_alone',
@@ -68,5 +69,15 @@ class FoodMenu extends Model
 
     public function scopeIsValid($query){
         $today = Carbon::today('Africa/Lagos');
+
+        return $query->where('availability', 1)
+            ->where(function ($subQuery) use ($today) {
+                $subQuery->whereNull('shelf_life_from')
+                         ->orWhere('shelf_life_from', '<=', $today);
+            })
+            ->where(function ($subQuery) use ($today) {
+                $subQuery->whereNull('shelf_life_to')
+                         ->orWhere('shelf_life_to', '>=', $today);
+            });
     }
 }
