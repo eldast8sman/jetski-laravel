@@ -143,7 +143,7 @@ Route::prefix('admin')->group(function(){
             Route::get('/', 'index')->name('admin.ads.index');
             Route::get('/{uuid}', 'show')->name('admin.ads.update');
             Route::post('/{uuid}', 'update')->name('admin.ads.update');
-            Route::get('/{uuid}/change-status', 'change_status')->name('admin.ads.changeStatus');
+            Route::post('/{uuid}/change-status', 'change_status')->name('admin.ads.changeStatus');
             Route::delete('/{uuid}', 'destroy')->name('admin.ads.delete');
         });
 
