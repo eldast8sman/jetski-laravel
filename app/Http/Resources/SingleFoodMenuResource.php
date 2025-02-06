@@ -25,7 +25,7 @@ class SingleFoodMenuResource extends JsonResource
             'shelf_life_to' => $this->shelf_life_to,
             'ingredients' => $this->ingredients,
             'details' => $this->details,
-            'add_ons' => ($this->add_ons()->count() > 0) ? MenuAddOnResource::collection($this->add_ons()->get()) : null,
+            'add_ons' => ($this->user_add_ons()->count() > 0) ? MenuAddOnResource::collection($this->user_add_ons()->get()) : null,
             'photos' => MenuPhotoResource::collection($this->photos)
         ];
     }

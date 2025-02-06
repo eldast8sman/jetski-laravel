@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddItemToCartRequest;
+use App\Http\Requests\PlaceOrderRequest;
 use App\Http\Resources\OrderCartItemResource;
 use App\Http\Resources\OrderCartResource;
 use App\Repositories\Interfaces\OrderCartItemRepositoryInterface;
@@ -53,7 +54,7 @@ class OrderCartController extends Controller
     public function update_item(Request $request, $uuid){
         $all = $request->all();
 
-        $update = $this->items->update($uuid, $all);
+        $update = $this->items->update_item($all, $uuid);
         if(!$update){
             return $this->failed_response($this->items->errors, 400);
         }
@@ -67,11 +68,11 @@ class OrderCartController extends Controller
             return $this->failed_response($this->items->errors, 400);
         }
 
-        return $this->success_response("Order successfully removed", new OrderCartItemResource($remove));
+        return $this->success_response("Order Item successfully removed from Cart");
     }
 
     public function show($uuid){
-        $cart = $this->items->findBy([
+        $cart = $this->order->findFirstBy([
             'uuid' => $uuid,
             'user_id' => auth('user-api')->user()->id
         ]);
@@ -82,12 +83,25 @@ class OrderCartController extends Controller
         return $this->success_response("Order Cart fetched successfully", new OrderCartResource($cart));
     }
 
-    public function place_order($uuid){
-        $place = $this->order->user_place_order($uuid);
+    public function place_order(PlaceOrderRequest $request, $uuid){
+        $place = $this->order->user_place_order($request, $uuid);
         if(!$place){
             return $this->failed_response($this->order->errors, 400);
         }
 
         return $this->success_response("Order successfully placed", new OrderCartResource($place));
+    }
+
+    public function current_cart(){
+        $cart = $this->order->findFirstBy([
+            'status' => 'Checkout',
+            'user_id' => auth('user-api')->user()->id,
+            'open' => 1
+        ]);
+        if(empty($cart)){
+            return $this->failed_response("Empty Cart", 404);
+        }
+
+        return $this->success_response("Current Cart fetched successfully", new OrderCartResource($cart));
     }
 }

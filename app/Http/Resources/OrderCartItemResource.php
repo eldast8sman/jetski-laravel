@@ -14,9 +14,15 @@ class OrderCartItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $menu = $this->food_menu;
+        $photo = $menu->photos()->first()->file_manager()->first(['url'])->url ?? null;
         return [
             'uuid' => $this->uuid,
-            'food_menu' => $this->food_menu()->first(['slug', 'name']),
+            'food_menu' => [
+                'slug' => $menu->slug,
+                'name' => $menu->name,
+                'photo' => $photo
+            ],
             'add_ons' => $this->sorted_add_ons(),
             'add_on_price' => $this->add_on_price,
             'unit_price' => $this->unit_price,
