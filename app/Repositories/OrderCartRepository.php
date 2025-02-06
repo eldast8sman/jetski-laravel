@@ -281,7 +281,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
             'order_cart_id',
             'status' => $status,
             'agent_type' => 'admin',
-            'agent_id' => auth('user-api')->user()->id
+            'agent_id' => auth('admin-api')->user()->id
         ]);
 
         return $order;
