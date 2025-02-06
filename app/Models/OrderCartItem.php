@@ -43,12 +43,14 @@ class OrderCartItem extends Model
         $add_ons = json_decode($this->add_ons, true);
         foreach($add_ons as $add_on){
             $menu = FoodMenu::find($add_on['id']);
+            $photo = $menu->photos()->first()->file_manager()->first(['url'])->url ?? null;
             if(!empty($menu)){
                 $return[] = [
                     'identifier' => ($type == 'user') ? $menu->slug : $menu->uuid,
                     'name' => $menu->name,
                     'unit_price' => $add_on['unit_price'],
                     'total_price' => $add_on['total_price'],
+                    'photo' => $photo
                 ];
             }
         }

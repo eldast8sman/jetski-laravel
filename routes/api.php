@@ -215,6 +215,7 @@ Route::prefix('user')->group(function(){
             Route::post('/{uuid}', 'place_order')->name('user.cart.placeOrder');
             Route::put('/items/{uuid}', 'update_item')->name('user.cart.update');
             Route::delete('/items/{uuid}', 'remove')->name('user.cart.remove');
+            Route::get('/order/current', 'current_cart')->name('user.cart.current');
         });
 
         Route::prefix('bookings')->controller(BookingController::class)->group(function(){

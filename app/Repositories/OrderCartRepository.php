@@ -11,6 +11,7 @@ use App\Models\WalletTransaction;
 use App\Repositories\Interfaces\OrderCartRepositoryInterface;
 use App\Services\G5PosService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -40,14 +41,14 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         $employee_code = config('g5pos.api_credentials.order_employee_code');
         $getNumber = $g5->getOrderNumber();
         $orderNumber = $getNumber[0]['OrderNumber'];
-
+        
         $user = $order->user;
 
         $orderData = [
             'OrderNumber' => intval($orderNumber),
             'OrderMenuID' => 2,
             'UserID' => intval($employee_code),
-            'CustomerID' => $user->g5_id
+            'CustomerID' => intval($user->g5_id)
         ];
 
         $orderId = $g5->newOrder($orderData);
@@ -56,10 +57,10 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         foreach($order->order_cart_items as $item){
             $menu = $this->menu->find($item->food_menu_id);
             $sel_items[] = [
-                'ItemID' => $menu->g5_id,
-                'Quantity' => $item->quantity,
+                'ItemID' => intval($menu->g5_id),
+                'Quantity' => intval($item->quantity),
                 'UsedPrice' => $item->unit_price,
-                'CustomerNumber' => $user->g5_id,
+                'CustomerNumber' => intval($user->g5_id),
                 'AffectedItem' => 0,
                 'VoidReasonID' => 0,
                 'Status' => 'selected',
@@ -77,10 +78,10 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
                 foreach($add_ons as $add_on){
                     $addOn = $this->menu->find($add_on->id);
                     $sel_items[] = [
-                        'ItemID' => $addOn->g5_id,
-                        'Quantity' => $add_on->quantity,
+                        'ItemID' => intval($addOn->g5_id),
+                        'Quantity' => intval($add_on->quantity),
                         'UsedPrice' => $add_on->unit_price,
-                        'CustomerNumber' => $user->g5_id,
+                        'CustomerNumber' => intval($user->g5_id),
                         'AffectedItem' => 0,
                         'VoidReasonID' => 0,
                         'Status' => 'selected',
@@ -109,6 +110,8 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
 
         $order->g5_id = $orderId;
         $order->g5_order_number = $orderNumber;
+        $order->status = 'Pending';
+        $order->open = 0;
         $order->save();
 
         if($order->tip_amount > 0){
@@ -140,17 +143,17 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
             'amount' => $order->total_amount,
             'type' => 'Debit',
             'uuid' => Str::uuid().'-'.time(),
-            'is_user_created' => false,
+            'is_user_credited' => false,
             'payment_processor' => 'G5 POS',
-            'externake_reference' => $order->g5_id
+            'external_reference' => $order->g5_id
         ]);
 
         return $order;
     }
 
-    public function user_place_order($uuid)
+    public function user_place_order(Request $request, $uuid)
     {
-        $order = $this->findFirstBy(['uuid' => $uuid, 'user_id', auth('user-api')->user()->id]);
+        $order = $this->findFirstBy(['uuid' => $uuid, 'user_id' => auth('user-api')->user()->id]);
         if(empty($order)){
             $this->errors = "No Order was fetched";
             return false;
@@ -161,9 +164,12 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
             return false;
         }
 
-        $confirm->order_by_type = "user";
-        $confirm->order_by_id = auth('user-api')->user()->id;
-        $confirm->save();
+        $data = $request->all();
+        $data['order_by_type'] = "user";
+        $data['order_by_id'] = auth('user-api')->user()->id;
+        $data['time_ordered'] = Carbon::now('Africa/Lagos')->format('Y-m-d H:i:s');
+       
+        $confirm->update($data);
 
         parent::__construct(new OrderTracker());
         $this->create([
