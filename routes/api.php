@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\FoodMenuController;
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\OrderCartController as AdminOrderCartController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\AdsController as ControllersAdsController;
 use App\Http\Controllers\AuthController as ControllersAuthController;
@@ -94,6 +95,13 @@ Route::prefix('admin')->group(function(){
             Route::post('/{uuid}', 'update')->name('foodMenu.update')->name('foodMenu.update');
             Route::get('/{uuid}/availability', 'availability')->name('foodMenu.availability');
             Route::delete('delete-photo/{uuid}', 'delete_photo');
+        });
+
+        Route::controller(AdminOrderCartController::class)->prefix('order-carts')->group(function(){
+            Route::get('/', 'index')->name('admin.orderCart.index');
+            Route::get('/orders/completed', 'completed_orders')->name('admin.orderCart.completed');
+            Route::get('/{uuid}', 'show')->name('admin.orderCart.show');
+            Route::put('/{uuid}/status', 'change_status')->name('admin.orderCart.changeStatus');
         });
 
         Route::prefix('orders')->group(function(){
@@ -210,7 +218,7 @@ Route::prefix('user')->group(function(){
         Route::prefix('carts')->controller(OrderCartController::class)->group(function(){
             Route::get('/' , 'index')->name('user.cart.index');
             Route::get('/{uuid}', 'show')->name('user.cart.show');
-            Route::get('/completed/orders', 'completed_orders')->name('user.cart.completed');
+            Route::get('/orders/completed', 'completed_orders')->name('user.cart.completed');
             Route::post('/', 'add_item_to_cart')->name('user.cart.add');
             Route::post('/{uuid}', 'place_order')->name('user.cart.placeOrder');
             Route::put('/items/{uuid}', 'update_item')->name('user.cart.update');

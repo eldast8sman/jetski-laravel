@@ -41,7 +41,6 @@ class UserRelativeRepository extends AbstractRepository implements UserRelativeR
             }
         }
         $all['parent_id'] = auth('user-api')->user()->id;
-        $all['g5_id'] = auth('user-api')->user()->g5_id;
 
         $repo = new MemberRepository(new User());
         $user = $repo->store($all);
