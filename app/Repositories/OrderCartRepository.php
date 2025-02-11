@@ -278,7 +278,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
 
         parent::__construct(new OrderTracker());
         $this->create([
-            'order_cart_id',
+            'order_cart_id' => $order->id,
             'status' => $status,
             'agent_type' => 'admin',
             'agent_id' => auth('admin-api')->user()->id
