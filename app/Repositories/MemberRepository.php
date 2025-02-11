@@ -125,9 +125,22 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
         return $user;
     }
 
-    public function index($limit)
+    public function index($limit, $search="")
     {
-        $users = $this->user->whereParent()->orderBy('firstname', 'asc')
+        $users = $this->user->whereParent();
+        if(!empty($search)){
+            $names = explode(' ', $search);
+            foreach($names as $name){
+                $name = trim($name);
+
+                $users = $users->where(function($query) use ($name){
+                    $query->where('firstname', 'like', '%'.$name.'%')
+                        ->orWhere('lastname', 'like', '%'.$name.'%');
+                });
+            }
+        }
+        
+        $users = $users->orderBy('firstname', 'asc')
                 ->orderBy('lastname', 'asc')->orderBy('created_at', 'asc')
                 ->paginate($limit);
 

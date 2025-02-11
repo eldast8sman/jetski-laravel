@@ -13,7 +13,7 @@ interface MemberRepositoryInterface extends AbstractRepositoryInterface
 
     public function store_user(Request $request);
 
-    public function index($limit);
+    public function index($limit, $search="");
 
     public function all_members($limit=null);
 
