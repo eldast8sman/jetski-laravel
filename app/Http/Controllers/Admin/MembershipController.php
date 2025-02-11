@@ -51,7 +51,8 @@ class MembershipController extends Controller
 
     public function index(Request $request){
         $limit = $request->has('limit') ? $request->limit : 20;
-        $users = $this->user->index($limit);
+        $search = !empty($request->search) ? $request->search : "";
+        $users = $this->user->index($limit, $search);
 
         return $this->success_response("Members fetched successfully", AllUserResource::collection($users)->response()->getData(true));
     }

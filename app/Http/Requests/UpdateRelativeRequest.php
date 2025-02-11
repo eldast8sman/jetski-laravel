@@ -26,7 +26,6 @@ class UpdateRelativeRequest extends FormRequest
             'relationship' => 'required|string',
             'firstname' => 'required|string',
             'lastname' => 'required|string',
-            'username' => 'required|string|'.Rule::unique('users', 'username')->ignore($this->route('id'), 'id'),
             'email' => 'required|string|email|'.Rule::unique('users', 'email')->ignore($this->route('id'), 'id'),
             'phone' => 'required|string',
             'dob' => 'required|date',
