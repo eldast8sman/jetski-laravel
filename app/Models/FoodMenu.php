@@ -32,7 +32,8 @@ class FoodMenu extends Model
         'is_stand_alone',
         'is_add_on',
         'add_ons',
-        'is_new'
+        'is_new',
+        'is_delivery_fee'
     ];
 
     public function getSlugOptions(): SlugOptions

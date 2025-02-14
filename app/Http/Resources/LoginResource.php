@@ -20,6 +20,7 @@ class LoginResource extends JsonResource
             'email' => $this->email,
             'phone' => $this->phone,
             'photo' => $this->photo,
+            'parent_id' => $this->parent_id,
             'authorization' => $this->authorization
         ];
     }

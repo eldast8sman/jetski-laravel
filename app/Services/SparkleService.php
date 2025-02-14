@@ -94,7 +94,7 @@ class SparkleService
 
         $wallet = $user->wallet()->first;
 
-        if(empty($trans = WalletTransaction::where('exyernal_reference', $data['external_reference'])->first())){
+        if(empty($trans = WalletTransaction::where('external_reference', $data['external_reference'])->first())){
             $trans = WalletTransaction::create([
                 'wallet_id' => $wallet->id,
                 'amount' => $data['amount'],
