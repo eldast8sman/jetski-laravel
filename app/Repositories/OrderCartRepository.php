@@ -151,10 +151,17 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         return $order;
     }
 
-    public function place_order($data){
+    public function place_order($data, User $user){
         $cart = OrderCart::create([
+            'uuid' => Str::uuid().'-'.time(),
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'order_type' => $data['order_type'],
+            'delivery_address' => (isset($data['delivery_address']) and !empty($data['delivery_address'])) ? $data['delivery_address'] : null,
+            'longitude' => (isset($data['longitude']) and !empty($data['longitude'])) ? $data['longitude'] : null,
+            'latitude' => (isset($data['latitude']) and !empty($data['latitude'])) ? $data['latitude'] : null,
             ''
-        ])
+        ]);
     }
 
     public function user_place_order(Request $request, $uuid)
