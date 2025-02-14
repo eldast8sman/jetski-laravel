@@ -35,6 +35,7 @@ class FoodMenu extends Model
         'is_new',
         'is_delivery_fee'
     ];
+    
 
     public function getSlugOptions(): SlugOptions
     {
