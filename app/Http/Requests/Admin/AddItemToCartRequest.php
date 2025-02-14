@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ChangeOrderStatusRequest extends FormRequest
+class AddItemToCartRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,9 @@ class ChangeOrderStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'required|string|in:Pending,Processing,Delivering,Completed,Cancelled'
+            'menu_id' => 'required|string|exists:food_menus,uuid',
+            'order_cart_id' => 'string|exists:order_carts,uuid|nullable',
+            'user_id' => 'string|exists:users,uuid|required_without:order_cart_id',
         ];
     }
 }

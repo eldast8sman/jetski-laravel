@@ -26,7 +26,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         $this->menu = new FoodMenuRepository(new FoodMenu());
     }
 
-    public function place_order($uuid){
+    public function old_place_order($uuid){
         $order = $this->findByUuid($uuid);
         if(empty($order)){
             $this->errors = "No Order was fetched";
@@ -149,6 +149,12 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         ]);
 
         return $order;
+    }
+
+    public function place_order($data){
+        $cart = OrderCart::create([
+            ''
+        ])
     }
 
     public function user_place_order(Request $request, $uuid)
@@ -278,7 +284,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
 
         parent::__construct(new OrderTracker());
         $this->create([
-            'order_cart_id',
+            'order_cart_id' => $order->id,
             'status' => $status,
             'agent_type' => 'admin',
             'agent_id' => auth('admin-api')->user()->id
