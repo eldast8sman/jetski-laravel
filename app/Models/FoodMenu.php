@@ -51,7 +51,9 @@ class FoodMenu extends Model
         $add_on_ids = json_decode($this->add_ons, true);
         $first = array_shift($add_on_ids);
 
-        $add_ons = $this->where('is_add_on', 1)->where('id', $first);
+        $add_ons = $this->where('is_add_on', 1)
+            ->where('is_delivery_fee', 0)
+            ->where('id', $first);
         if(!empty($add_on_ids)){
             foreach($add_on_ids as $add_on_id){
                 $add_ons = $add_ons->orWhere('id', $add_on_id);
@@ -68,7 +70,9 @@ class FoodMenu extends Model
         $add_on_ids = json_decode($this->add_ons, true);
         $first = array_shift($add_on_ids);
 
-        $add_ons = $this->where('is_add_on', 1)->where('id', $first);
+        $add_ons = $this->where('is_add_on', 1)
+            ->where('is_delivery_fee', 0)
+            ->where('id', $first);
         if(!empty($add_on_ids)){
             foreach($add_on_ids as $add_on_id){
                 $add_ons = $add_ons->orWhere('id', $add_on_id);

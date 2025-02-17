@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateFoodMenuRequest;
 use App\Http\Resources\Admin\AllFoodMenuResource;
+use App\Http\Resources\Admin\DeliveryFeeResource;
 use App\Http\Resources\Admin\MenuAddOnResource;
 use App\Http\Resources\Admin\SingleFoodMenuResource;
 use App\Jobs\StoreFoodMenuJob;
@@ -96,5 +97,13 @@ class FoodMenuController extends Controller
         $this->menu->delete_photo($uuid);
 
         return $this->success_response('Photo successfully deleted');
+    }
+
+    public function delivery_fees(Request $request){
+        $search = $request->has('search') ? (string)$request->search : "";
+        $limit = $request->has('limit') ? (int)$request->limit : 10;
+
+        $fees = $this->menu->delivery_fees($limit, $search);
+        return $this->success_response('Delivery Fees fetched successfully', DeliveryFeeResource::collection($fees)->response()->getData(true));
     }
 }

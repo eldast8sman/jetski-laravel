@@ -21,4 +21,6 @@ interface FoodMenuRepositoryInterface extends AbstractRepositoryInterface
     public function delete_photo(string $uuid);
 
     public function fetch_add_ons(string $search="");
+
+    public function delivery_fees($limit=10, $search="");
 }

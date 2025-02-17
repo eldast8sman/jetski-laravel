@@ -20,6 +20,7 @@ class OrderCart extends Model
         'delivery_phone',
         'delivery_email',
         'status',
+        'delivery_fee_id',
         'delivery_amount',
         'service_charge',
         'service_charge_amount',

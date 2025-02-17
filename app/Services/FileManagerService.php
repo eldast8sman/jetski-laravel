@@ -31,7 +31,7 @@ class FileManagerService
     {
         $extension = strtolower($file->getClientOriginalExtension());
         $filename = Str::random(20).time().'.'.$extension;
-        if(($extension == 'jpg') || ($extension == 'jpeg') || ($extension == 'png') || ($extension == 'gif') || ($extension == 'svg') || ($extension == 'webp')){
+        if(($extension == 'jpg') || ($extension == 'jpeg') || ($extension == 'png') || ($extension == 'gif') || ($extension == 'svg') || ($extension == 'webp') || ($extension == 'jfif')){
             $path = 'images';
         } elseif(($extension == 'pdf') || ($extension == 'docx') || ($extension == 'csv') || ($extension == 'xlsx') || ($extension == 'doc')){
             $path = 'documents';

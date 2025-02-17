@@ -83,8 +83,8 @@ class OrderCartController extends Controller
         return $this->success_response("Order Cart fetched successfully", new OrderCartResource($cart));
     }
 
-    public function place_order(PlaceOrderRequest $request, $uuid){
-        $place = $this->order->user_place_order($request, $uuid);
+    public function place_order(PlaceOrderRequest $request){
+        $place = $this->order->user_place_order($request);
         if(!$place){
             return $this->failed_response($this->order->errors, 400);
         }
@@ -103,5 +103,18 @@ class OrderCartController extends Controller
         }
 
         return $this->success_response("Current Cart fetched successfully", new OrderCartResource($cart));
+    }
+
+    public function modify_order(PlaceOrderRequest $request, $uuid){
+        $order = $this->order->findByUuid($uuid);
+        if(empty($order) or ($order->user_id != auth('user-api')->user()->id)){
+            return $this->failed_response("No Order was fetched", 404);
+        }
+
+        if(!$modify = $this->order->modify_order($uuid, $request)){
+            return $this->failed_response($this->order->errors, 400);
+        }
+
+        return $this->success_response("Order modified successfully", new OrderCartResource($modify));
     }
 }
