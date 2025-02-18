@@ -37,40 +37,6 @@ class OrderCartController extends Controller
         return $this->success_response("Completed Orders fetched successfully", OrderCartResource::collection($orders)->response()->getData(true));
     }
 
-    public function add_item_to_cart(AddItemToCartRequest $request){
-        $all = $request->all();
-        $all['identifier'] = $all['slug'];
-        unset($all['slug']);
-        $all['user_id'] = auth('user-api')->user()->id;
-
-        $add = $this->items->store($all);
-        if(!$add){
-            return $this->failed_response($this->items->errors, 400);
-        }
-
-        return $this->success_response("Order successfully placed", new OrderCartItemResource($add));
-    }
-
-    public function update_item(Request $request, $uuid){
-        $all = $request->all();
-
-        $update = $this->items->update_item($all, $uuid);
-        if(!$update){
-            return $this->failed_response($this->items->errors, 400);
-        }
-
-        return $this->success_response("Order successfully updated", new OrderCartItemResource($update));
-    }
-
-    public function remove($uuid){
-        $remove = $this->items->remove_item($uuid);
-        if(!$remove){
-            return $this->failed_response($this->items->errors, 400);
-        }
-
-        return $this->success_response("Order Item successfully removed from Cart");
-    }
-
     public function show($uuid){
         $cart = $this->order->findFirstBy([
             'uuid' => $uuid,
@@ -90,19 +56,6 @@ class OrderCartController extends Controller
         }
 
         return $this->success_response("Order successfully placed", new OrderCartResource($place));
-    }
-
-    public function current_cart(){
-        $cart = $this->order->findFirstBy([
-            'status' => 'Checkout',
-            'user_id' => auth('user-api')->user()->id,
-            'open' => 1
-        ]);
-        if(empty($cart)){
-            return $this->failed_response("Empty Cart", 404);
-        }
-
-        return $this->success_response("Current Cart fetched successfully", new OrderCartResource($cart));
     }
 
     public function modify_order(PlaceOrderRequest $request, $uuid){

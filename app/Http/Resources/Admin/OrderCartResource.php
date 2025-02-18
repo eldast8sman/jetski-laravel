@@ -36,6 +36,7 @@ class OrderCartResource extends JsonResource
             'total_quantity' => $this->total_quantity,
             'total_amount' => $this->total_amount,
             'time_ordered' => $this->time_ordered,
+            'status' => $this->status,
             'trackings' => OrderTrackerResource::collection($this->order_trackers),
         ];
     }

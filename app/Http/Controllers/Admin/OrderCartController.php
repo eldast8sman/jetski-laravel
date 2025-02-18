@@ -48,7 +48,7 @@ class OrderCartController extends Controller
     }
 
     public function place_order(PlaceOrderRequest $request){
-        if(!$place = $this->order->admin_place_order($request)){
+        if(!$place = $this->order->admin_place_order($request, auth('admin-api')->user())){
             return $this->failed_response($this->order->errors, 400);
         }
 
@@ -63,8 +63,8 @@ class OrderCartController extends Controller
         return $this->success_response("Order Modified successfully", new OrderCartResource($modify));
     }
 
-    public function confirm_order($uuid){
-        if(!$confirm = $this->order->confirm_order($uuid)){
+    public function confirm_order(Request $request, $uuid){
+        if(!$confirm = $this->order->confirm_order($request, $uuid)){
             return $this->failed_response($this->order->errors, 400);
         }
 

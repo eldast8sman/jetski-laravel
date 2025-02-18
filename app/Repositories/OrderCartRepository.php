@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Admin;
 use App\Models\FoodMenu;
 use App\Models\OrderCart;
 use App\Models\OrderCartItem;
@@ -30,137 +31,12 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         $this->menu = new FoodMenuRepository(new FoodMenu());
     }
 
-    public function old_place_order($uuid){
-        $order = $this->findByUuid($uuid);
-        if(empty($order)){
-            $this->errors = "No Order was fetched";
-            return false;
-        }
-        if($order->status != 'Checkout'){
-            $this->errors = "Cannot Confirm this Order";
-            return false;
-        }
-
-        $g5 = new G5PosService();
-        $employee_code = config('g5pos.api_credentials.order_employee_code');
-        $getNumber = $g5->getOrderNumber();
-        $orderNumber = $getNumber[0]['OrderNumber'];
-        
-        $user = $order->user;
-
-        $orderData = [
-            'OrderNumber' => intval($orderNumber),
-            'OrderMenuID' => 2,
-            'UserID' => intval($employee_code),
-            'CustomerID' => intval($user->g5_id)
-        ];
-
-        $orderId = $g5->newOrder($orderData);
-
-        $sel_items = [];
-        foreach($order->order_cart_items as $item){
-            $menu = $this->menu->find($item->food_menu_id);
-            $sel_items[] = [
-                'ItemID' => intval($menu->g5_id),
-                'Quantity' => intval($item->quantity),
-                'UsedPrice' => $item->unit_price,
-                'CustomerNumber' => intval($user->g5_id),
-                'AffectedItem' => 0,
-                'VoidReasonID' => 0,
-                'Status' => 'selected',
-                'OrderbyEmployeeId' => intval($employee_code),
-                'PriceModeID' => 1,
-                'OrderingTime' => Carbon::now('Africa/Lagos')->format('Y-m-d'),
-                'ItemDescription' => $menu->name,
-                'ItemRemark' => '',
-                'inctax' => 0,
-                'SetMenu' => false
-            ];
-
-            if(!empty($item->add_ons)){
-                $add_ons = json_decode($item->add_ons);
-                foreach($add_ons as $add_on){
-                    $addOn = $this->menu->find($add_on->id);
-                    $sel_items[] = [
-                        'ItemID' => intval($addOn->g5_id),
-                        'Quantity' => intval($add_on->quantity),
-                        'UsedPrice' => $add_on->unit_price,
-                        'CustomerNumber' => intval($user->g5_id),
-                        'AffectedItem' => 0,
-                        'VoidReasonID' => 0,
-                        'Status' => 'selected',
-                        'OrderbyEmployeeId' => intval($employee_code),
-                        'PriceModeID' => 1,
-                        'OrderingTime' => Carbon::now('Africa/Lagos')->format('Y-m-d'),
-                        'ItemDescription' => $addOn->name,
-                        'ItemRemark' => '',
-                        'inctax' => 0,
-                        'SetMenu' => false
-                    ];
-                }
-            }
-        }
-
-        $saveData = [
-            'OrderID' => intval($orderId),
-            'selectedItems' => $sel_items
-        ];
-        $res = $g5->saveOrder($saveData);
-
-        if(!filter_var($res, FILTER_VALIDATE_BOOLEAN)){
-            $this->errors = "Order can't be processed";
-            return false;
-        }
-
-        $order->g5_id = $orderId;
-        $order->g5_order_number = $orderNumber;
-        $order->status = 'Pending';
-        $order->open = 0;
-        $order->save();
-
-        if($order->tip_amount > 0){
-            try {
-                $tip = [
-                    'order' => $order->g5_id,
-                    'Amount' => $order->tip_amount,
-                    'PaymentTypeId' => 4,
-                    'PayAmt' => $order->total_amount,
-                ];
-
-                $g5->tip($tip);
-            } catch(\Exception $e){
-                Log::error('Tip Error - '.$order->id.': '.$e->getMessage());
-            }
-        }
-
-        if(empty($user->parent_id)){
-            $wallet = Wallet::where('user_id', $user->id)->first();
-        } else {
-            $wallet = Wallet::where('user_id', $user->parent_id)->first();
-        }
-
-        $wallet->balance -= $order->total_amount;
-        $wallet->save();
-
-        WalletTransaction::create([
-            'wallet_id' => $wallet->id,
-            'amount' => $order->total_amount,
-            'type' => 'Debit',
-            'uuid' => Str::uuid().'-'.time(),
-            'is_user_credited' => false,
-            'payment_processor' => 'G5 POS',
-            'external_reference' => $order->g5_id
-        ]);
-
-        return $order;
-    }
-
     public function place_order($data, User $user){
-        $delivery_fee = (isset($data['delivery_fee_uuid']) and !empty($data['delivery_fee_uuid'])) ? (!empty($this->findByUuid($data['delivery_fee_uuid'])) ? $this->findByUuid($data['delivery_fee_uuid']) : null) : null;
+        $delivery_fee = (isset($data['delivery_fee_uuid']) and !empty($data['delivery_fee_uuid'])) ? (!empty($this->menu->findByUuid($data['delivery_fee_uuid'])) ? $this->findByUuid($data['delivery_fee_uuid']) : null) : null;
         $cart = OrderCart::create([
             'uuid' => Str::uuid().'-'.time(),
             'user_id' => $user->id,
-            'user_name' => $user->name,
+            'user_name' => $user->firstname.' '.$user->lastname,
             'order_type' => $data['order_type'],
             'delivery_address' => (isset($data['delivery_address']) and !empty($data['delivery_address'])) ? $data['delivery_address'] : null,
             'longitude' => (isset($data['longitude']) and !empty($data['longitude'])) ? $data['longitude'] : null,
@@ -177,17 +53,28 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
             'time_ordered' => Carbon::now('Africa/Lagos')->format('Y-m-d H:i:s')
         ]);
 
+        $errors = [];
+
         foreach($data['items'] as $item){
             $item['user_id'] = $user->id;
             $item['order_cart_id'] = $cart->id;
-            $this->cart_item->store($item);
+            $store = $this->cart_item->store($item);
+            if(!$store){
+                $errors[] = $this->cart_item->errors;
+            }
         }
+
+        if(!empty($errors)){
+            $this->errors = $errors;
+            return false;
+        }
+
         $cart->open = 0;
         $cart->save();
 
         $this->track_order($cart, 'Pending', $cart->order_by_type, $cart->order_by_id);
 
-        return $cart;        
+        return $this->find($cart->id);        
     }
 
     public function modify_order(string $uuid, Request $request)
@@ -200,13 +87,13 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         }
 
         if($order->status != 'Pending'){
-            $this->errors = "You can Modify a Pending Order";
+            $this->errors = "You can only Modify a Pending Order";
             return false;
         }
 
         $delivery_fee = (isset($data['delivery_fee_uuid']) and !empty($data['delivery_fee_uuid'])) ? (!empty($this->findByUuid($data['delivery_fee_uuid'])) ? $this->findByUuid($data['delivery_fee_uuid']) : null) : null;
         $order->update([
-             'order_type' => $data['order_type'],
+            'order_type' => $data['order_type'],
             'delivery_address' => (isset($data['delivery_address']) and !empty($data['delivery_address'])) ? $data['delivery_address'] : null,
             'longitude' => (isset($data['longitude']) and !empty($data['longitude'])) ? $data['longitude'] : null,
             'latitude' => (isset($data['latitude']) and !empty($data['latitude'])) ? $data['latitude'] : null,
@@ -232,10 +119,10 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         $order->open = 0;
         $order->save();
 
-        return $order;
+        return $this->find($order->id);
     }
 
-    public function confirm_order($uuid){
+    public function confirm_order(Request $request, $uuid){
         $order = $this->findByUuid($uuid);
         if(empty($order)){
             $this->errors = "No Order was fetched";
@@ -247,7 +134,15 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
             return false;
         }
 
-        if(!$this->g5_place($order->uuid)){
+        if(!empty($request->delivery_fee_uuid)){
+            $delivery_fee = $this->menu->findByUuid($request->delivery_fee_uuid);
+            $order->delivery_fee_id = !empty($delivery_fee) ? $delivery_fee->id : null;
+            $order->delivery_amount = !empty($delivery_fee) ? $delivery_fee->amount : 0;
+            $order->total_amount = $order->item_amount + $order->delivery_amount + $order->service_charge_amount + $order->tip_amount;
+            $order->save();
+        }
+
+        if(!$this->g5_place($order)){
             return false;
         }
 
@@ -384,6 +279,8 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
             'type' => 'Debit',
             'uuid' => Str::uuid().'-'.time(),
             'is_user_credited' => false,
+            'reason' => 'Order',
+            'reason_id' => $order->id,
             'payment_processor' => 'G5 POS',
             'external_reference' => $order->g5_id
         ]);
@@ -400,7 +297,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
             'order_cart_id' => $order->id,
             'status' => $status,
             'agent_type' => $agent,
-            'agent' => $agent_id
+            'agent_id' => $agent_id
         ]);
     }
 
@@ -416,9 +313,8 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         return $order;
     }
 
-    public function admin_place_order(Request $request)
+    public function admin_place_order(Request $request, Admin $admin)
     {
-        $admin = auth('admin-api')->user();
         $all = $request->all();
         $all['order_by_type'] = 'admin';
         $all['order_by_id'] = $admin->id;
@@ -443,7 +339,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
     public function index($limit = 10, $search = "")
     {
         $criteria = [
-            ['status', '!=', 'Delivered']
+            ['status', '!=', 'Completed']
         ];
         if(!empty($search)){
             $criteria[] = ['order_number', 'like', '%'.$search.'%'];
@@ -459,7 +355,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
     public function completed_orders($limit = 10, $search = "")
     {
         $criteria = [
-            ['status', '=', 'Delivered']
+            ['status', '=', 'Completed']
         ];
         if(!empty($search)){
             $criteria[] = ['order_number', 'like', '%'.$search.'%'];
@@ -476,7 +372,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
     {
         $criteria = [
             ['user_id', '=', auth('user-api')->user()->id],
-            ['status', '!=', 'Delivered']
+            ['status', '!=', 'Completed']
         ];
         $orderBy = [
             ['created_at', 'asc']
@@ -489,7 +385,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
     {
         $criteria = [
             ['user_id', '=', auth('user-api')->user()->id],
-            ['status', '=', 'Delivered']
+            ['status', '=', 'Completed']
         ];
         $orderBy = [
             ['created_at', 'desc']

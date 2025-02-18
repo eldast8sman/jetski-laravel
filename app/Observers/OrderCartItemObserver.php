@@ -37,7 +37,6 @@ class OrderCartItemObserver
     {
         $items = $order->order_cart_items();
         if(empty($items->count())){
-            $order->delete();
             return;
         }
         $items = $items->get();
