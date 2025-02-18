@@ -12,6 +12,8 @@ use App\Http\Requests\Admin\UpdateWatercraftInformationRequest;
 use App\Http\Requests\Admin\UserActivationRequest;
 use App\Http\Resources\Admin\AllUserResource;
 use App\Http\Resources\Admin\UserResource;
+use App\Http\Resources\Admin\WalletResource;
+use App\Http\Resources\Admin\WalletTransactionResource;
 use App\Imports\MembershipImport;
 use App\Models\User;
 use App\Repositories\Interfaces\EmploymentDetailRepositoryInterface;
@@ -19,6 +21,7 @@ use App\Repositories\Interfaces\MemberRepositoryInterface;
 use App\Repositories\Interfaces\MembershipInformationRepositoryInterface;
 use App\Repositories\Interfaces\MenuRepositoryInterface;
 use App\Repositories\Interfaces\UserWatercraftRepositoryInterface;
+use App\Repositories\Interfaces\WalletRepositoryInterface;
 use App\Repositories\MenuRepository;
 use App\Services\G5PosService;
 use Exception;
@@ -33,13 +36,15 @@ class MembershipController extends Controller
     protected $watercraft;
     protected $employment;
     protected $product;
+    protected $wallet;
 
     public function __construct(
         MemberRepositoryInterface $member,
         MembershipInformationRepositoryInterface $info,
         UserWatercraftRepositoryInterface $watercraft,
         EmploymentDetailRepositoryInterface $employment,
-        MenuRepositoryInterface $product
+        MenuRepositoryInterface $product,
+        WalletRepositoryInterface $wallet
     )
     {
         $this->user = $member;
@@ -47,6 +52,7 @@ class MembershipController extends Controller
         $this->watercraft = $watercraft;
         $this->employment = $employment;
         $this->product = $product;
+        $this->wallet = $wallet;
     }
 
     public function index(Request $request){
@@ -181,5 +187,22 @@ class MembershipController extends Controller
         $store = $this->user->store($data, 0);
 
         return $this->success_response("User added", $store);
+    }
+
+    public function wallet($user_id){
+        $user = $this->find_uuid($user_id);
+        return $this->success_response("User Wallet details fetched succesfully", new WalletResource($user));
+    }
+
+    public function wallet_transactions(Request $request, $user_id){
+        $type = $request->has('type') ? $request->type : "";
+        $from = $request->has('from') ? $request->from : "";
+        $to = $request->has('to') ? $request->to : "";
+        $sort = $request->has('sort') ? $request->sort : "desc";
+        $limit = $request->has('limit') ? $request->limit : 10;
+
+        $user = $this->find_uuid($user_id);
+        $transactions = $this->wallet->wallet_transactions($user->id, $type, $from, $to, $sort, $limit);
+        return $this->success_response("Wallet Transactions fetched successfully", WalletTransactionResource::collection($transactions)->response()->getData(true));
     }
 }
