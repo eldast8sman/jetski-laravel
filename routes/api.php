@@ -91,6 +91,7 @@ Route::prefix('admin')->group(function(){
             Route::get('/', 'index')->name('foodMenu.index');
             Route::get('/menu/new', 'new_menu')->name('foodMenu.newMenu');
             Route::get('/menu/add-ons', 'add_ons')->name('foodMenu.addOns.index');
+            Route::get('/menu/delivery-fees', 'delivery_fees')->name('foodMenu.delivery_fees.index');
             Route::get('/{uuid}', 'show')->name('foodMenu.show');
             Route::post('/{uuid}', 'update')->name('foodMenu.update')->name('foodMenu.update');
             Route::get('/{uuid}/availability', 'availability')->name('foodMenu.availability');
@@ -99,8 +100,11 @@ Route::prefix('admin')->group(function(){
 
         Route::controller(AdminOrderCartController::class)->prefix('order-carts')->group(function(){
             Route::get('/', 'index')->name('admin.orderCart.index');
+            Route::post('/', 'place_order')->name('admin.orderCart.place');
             Route::get('/orders/completed', 'completed_orders')->name('admin.orderCart.completed');
             Route::get('/{uuid}', 'show')->name('admin.orderCart.show');
+            Route::post('/{uuid}/confirm', 'confirm_order')->name('admin.orderCart.confirm');
+            Route::post('/{uuid}', 'modify_order')->name('admin.orderCart.modify');
             Route::put('/{uuid}/status', 'change_status')->name('admin.orderCart.changeStatus');
         });
 
@@ -219,11 +223,9 @@ Route::prefix('user')->group(function(){
             Route::get('/' , 'index')->name('user.cart.index');
             Route::get('/{uuid}', 'show')->name('user.cart.show');
             Route::get('/orders/completed', 'completed_orders')->name('user.cart.completed');
-            Route::post('/', 'add_item_to_cart')->name('user.cart.add');
-            Route::post('/{uuid}', 'place_order')->name('user.cart.placeOrder');
-            Route::put('/items/{uuid}', 'update_item')->name('user.cart.update');
-            Route::delete('/items/{uuid}', 'remove')->name('user.cart.remove');
-            Route::get('/order/current', 'current_cart')->name('user.cart.current');
+            // Route::post('/', 'add_item_to_cart')->name('user.cart.add');
+            Route::post('/', 'place_order')->name('user.cart.placeOrder');
+            Route::post('/{uuid}', 'modify_order')->name('user.cart.modify');
         });
 
         Route::prefix('bookings')->controller(BookingController::class)->group(function(){

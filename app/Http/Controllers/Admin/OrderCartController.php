@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ChangeOrderStatusRequest;
+use App\Http\Requests\Admin\ModifyOrderRequest;
+use App\Http\Requests\Admin\PlaceOrderRequest;
 use App\Http\Resources\Admin\AllOrderCartResource;
 use App\Http\Resources\Admin\OrderCartResource;
 use App\Repositories\Interfaces\OrderCartItemRepositoryInterface;
@@ -43,6 +45,30 @@ class OrderCartController extends Controller
             return $this->failed_response("No Order was fetched", 404);
         }
         return $this->success_response("Order fetched successfully", new OrderCartResource($order));
+    }
+
+    public function place_order(PlaceOrderRequest $request){
+        if(!$place = $this->order->admin_place_order($request, auth('admin-api')->user())){
+            return $this->failed_response($this->order->errors, 400);
+        }
+
+        return $this->success_response("Order placed successfully", new OrderCartResource($place));
+    }
+
+    public function modify_order(ModifyOrderRequest $request, $uuid){
+        if(!$modify = $this->order->modify_order($uuid, $request)){
+            return $this->failed_response($this->order->errors, 400);
+        }
+
+        return $this->success_response("Order Modified successfully", new OrderCartResource($modify));
+    }
+
+    public function confirm_order(Request $request, $uuid){
+        if(!$confirm = $this->order->confirm_order($request, $uuid)){
+            return $this->failed_response($this->order->errors, 400);
+        }
+
+        return $this->success_response("Order Confirmed successfully", new OrderCartResource($confirm));
     }
 
     public function change_status(ChangeOrderStatusRequest $request, $uuid){

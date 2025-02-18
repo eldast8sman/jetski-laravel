@@ -73,7 +73,7 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
         return $menus;
     }
 
-    public function fetch_add_ons(string $search = "")
+    public function fetch_add_ons(string $search="")
     {
         $data = [
             ['is_add_on', '=', 1]
@@ -163,5 +163,18 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
         $file->delete($photo->file_manager_id);
 
         return true;
+    }
+
+    public function delivery_fees($limit = 10, $search="")
+    {
+        $fees = FoodMenu::where('is_delivery_fee', 1);
+        if(!empty($search)){
+            $fees = $fees->where(function($query) use ($search){
+                $query->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%');
+            });
+        }
+
+        return $fees->paginate($limit);
     }
 }

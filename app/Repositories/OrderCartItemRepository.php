@@ -22,7 +22,7 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
     public function store(array $data)
     {
         try {
-            $item = $this->menu->show($data['identifier']);
+            $item = $this->menu->show($data['id']);
             if(empty($item)){
                 $this->errors = "Item not found";
                 return false;
@@ -36,7 +36,7 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
                 return false;
             }
 
-            $add_ons = [];
+            $add_ons = null;
             $add_on_price = 0;
             if(isset($data['add_ons']) and !empty($data['add_ons'])){
                 $sorted = $this->sort_add_ons($data['add_ons'], $item);
@@ -64,65 +64,10 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
         }
     }
 
-    public function update_item(array $data, $uuid)
-    {
-        try {
-            $cart_item = $this->findByUuid($uuid);
-            $order = $cart_item->order_cart;
-            if(($order->status != 'Checkout') and ($order->status != 'Pending')){
-                $this->errors = "Order is already processed";
-                return false;
-            }
-            $item = $this->menu->show($data['identifier']);
-            if(empty($item)){
-                $this->errors = "Item not found";
-                return false;
-            }
-            if($item->is_stand_alone != 1){
-                $this->errors = "Item not Stand Alone for Ordering";
-                return false;
-            }
-            if(!$this->check_availability($item)){
-                $this->errors = "Item not available";
-                return false;
-            }
-
-            $add_ons = [];
-            $add_on_price = 0;
-            if(isset($data['add_ons']) and !empty($data['add_ons'])){
-                $sorted = $this->sort_add_ons($data['add_ons'], $item);
-                $add_ons = $sorted['add_ons'];
-                $add_on_price = $sorted['total_price'];
-            }
-            $total_unit_price = $item->amount + $add_on_price;
-            $total_price = $total_unit_price * $data['quantity'];
-            
-            $cart_item->update([
-                'food_menu_id' => $item->id,
-                'add_ons' => $add_ons,
-                'add_on_price' => $add_on_price,
-                'unit_price' => $item->amount,
-                'total_unit_price' => $total_unit_price,
-                'quantity' => $data['quantity'],
-                'total_price' => $total_price
-            ]);
-
-            return $cart_item;
-        } catch(\Exception $e){
-            $this->errors = $e->getMessage();
-            return false;
-        }
-    }
-
     public function remove_item($uuid)
     {
         try {
             $cart_item = $this->findByUuid($uuid);
-            $order = $cart_item->order_cart;
-            if(($order->status != 'Checkout') and ($order->status != 'Pending')){
-                $this->errors = "Order is already processed";
-                return false;
-            }
             $cart_item->delete();
             return true;
         } catch(\Exception $e){
@@ -153,7 +98,7 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
         }
 
         return [
-            'add_ons' => json_encode($addOns),
+            'add_ons' => !empty($addOns) ? json_encode($addOns) : null,
             'total_price' => $total_price
         ];
     }

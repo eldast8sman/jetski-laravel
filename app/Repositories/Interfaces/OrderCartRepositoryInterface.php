@@ -2,14 +2,15 @@
 
 namespace App\Repositories\Interfaces;
 
+use App\Models\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 interface OrderCartRepositoryInterface extends AbstractRepositoryInterface
 {
-    public function admin_place_order($uuid, User $user);
+    public function admin_place_order(Request $request, Admin $admin);
 
-    public function user_place_order(Request $request, $uuid);
+    public function user_place_order(Request $request);
 
     public function index($limit=10, $search="");
 
@@ -21,5 +22,9 @@ interface OrderCartRepositoryInterface extends AbstractRepositoryInterface
 
     public function show($uuid);
 
+    public function modify_order(string $uuid, Request $request);
+
     public function change_status($uuid, $status);
+
+    public function confirm_order(Request $request, string $uuid);
 }

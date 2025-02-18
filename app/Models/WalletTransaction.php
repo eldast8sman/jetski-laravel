@@ -14,6 +14,8 @@ class WalletTransaction extends Model
         'wallet_id',
         'amount',
         'type',
+        'reason',
+        'reason_id',
         'is_user_credited',
         'external_reference',
         'payment_processor'

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,6 +22,7 @@ class PlaceOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_id' => 'required|string|exists:users,uuid',
             'order_type' => 'required|string|in:Delivery,Take Out,Dining In',
             'delivery_address' => 'required_if:order_type,Delivery|string',
             'longitude' => 'numeric|nullable',
@@ -29,10 +30,10 @@ class PlaceOrderRequest extends FormRequest
             'delivery_phone' => 'required_if:order_type,Delivery|string',
             'delivery_email' => 'required_if:order_type,Delivery|email',
             'items' => 'required|array',
-            'items.*.id' => 'required|string|exists:food_menus,slug',
+            'items.*.id' => 'required|string|exists:food_menus,uuid',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.add_ons' => 'nullable|array',
-            'items.*.add_ons.*.id' => 'required|string|exists:food_menus,slug',
+            'items.*.add_ons.*.id' => 'required|string|exists:food_menus,uuid',
             'items.*.add_ons.*.quantity' => 'required|integer|min:1',
         ];
     }
