@@ -26,6 +26,7 @@ use App\Http\Controllers\OrderCartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RelativeController;
+use App\Http\Controllers\WalletController;
 use App\Services\G5PosService;
 use App\Services\SparkleService;
 use Illuminate\Http\Request;
@@ -72,6 +73,8 @@ Route::prefix('admin')->group(function(){
             Route::get('/{user}/verification-resend', 'resend_activation_link')->name('admin.members.verificationLinkResend');
             Route::get('/{uuid}', 'show')->name('admin.members.show');
             Route::post('/{uuid}/activation', 'user_activation')->name('admin.members.activation');
+            Route::get('/{uuid}/wallet', 'wallet')->name('admin.members.wallet');
+            Route::get('/{uuid}/wallet-transactions', 'wallet_transactions')->name('admin.members.walletTreansactions');
             Route::post('/{uuid}/profile', 'update')->name('admin.members.update');
             Route::post('/{uuid}/membership', 'update_membership_information')->name('admin.members.membership.update');
             Route::post('/{uuid}/watercraft', 'update_watercraft_information')->name('admin.members.watercraft.update');
@@ -250,6 +253,11 @@ Route::prefix('user')->group(function(){
         Route::controller(ControllersAdsController::class)->prefix('ads')->group(function(){
             Route::get('/', 'index')->name('user.ads.index');
             Route::get('/{uuid}/click-increment', 'click_increment')->name('user.ads.click');
+        });
+
+        Route::controller(WalletController::class)->prefix('wallet')->group(function(){
+            Route::get('/', 'wallet_details')->name('user.wallet.details');
+            Route::get('/transactions', 'wallet_transactions')->name('user.wallet.transactions');
         });
 
         Route::get('/', [DashboardController::class, 'index'])->name('userDashboard');
