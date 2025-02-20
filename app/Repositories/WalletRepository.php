@@ -43,6 +43,33 @@ class WalletRepository extends AbstractRepository implements WalletRepositoryInt
         return $transactions;
     }
 
+    public function all_transactions($type = "", $from = "", $to = "", $sort="desc", $limit = 10)
+    {
+        parent::__construct(new WalletTransaction());
+
+        if(empty($type) and empty($from) and empty($to)){
+            return $this->all([['created_at', $sort]], $limit);
+        }
+
+        $data = [];
+        if(!empty($type)){
+            $data[] = ['type', '=', $type];
+        }
+        if(!empty($from)){
+            $data[] = ['created_at', '>=', $from.' 00:00:00'];
+        }
+        if(!empty($to)){
+            $data[] = ['created_at', '<=', $to.' 23:59:59'];
+        }
+
+        $orderBy = [
+            ['created_at', $sort]
+        ];
+
+        $transactions = $this->findBy($data, $orderBy, $limit);
+        return $transactions;
+    }
+
     public function userTransactions(int $id, int $limit=10)
     {
         $wallet = $this->findFirstBy([
