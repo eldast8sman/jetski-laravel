@@ -10,6 +10,7 @@ use App\Http\Requests\Admin\UpdateMembershipInformationRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Http\Requests\Admin\UpdateWatercraftInformationRequest;
 use App\Http\Requests\Admin\UserActivationRequest;
+use App\Http\Resources\Admin\AllTransactionResource;
 use App\Http\Resources\Admin\AllUserResource;
 use App\Http\Resources\Admin\UserResource;
 use App\Http\Resources\Admin\WalletResource;
@@ -204,5 +205,16 @@ class MembershipController extends Controller
         $user = $this->find_uuid($user_id);
         $transactions = $this->wallet->wallet_transactions($user->id, $type, $from, $to, $sort, $limit);
         return $this->success_response("Wallet Transactions fetched successfully", WalletTransactionResource::collection($transactions)->response()->getData(true));
+    }
+
+    public function all_transactions(Request $request){
+        $type = $request->has('type') ? $request->type : "";
+        $from = $request->has('from') ? $request->from : "";
+        $to = $request->has('to') ? $request->to : "";
+        $sort = $request->has('sort') ? $request->sort : "desc";
+        $limit = $request->has('limit') ? $request->limit : 10;
+
+        $transactions = $this->wallet->all_transactions($type, $from, $to, $sort, $limit);
+        return $this->success_response("All transactions fetched successfully", AllTransactionResource::collection($transactions)->response()->getData(true));
     }
 }

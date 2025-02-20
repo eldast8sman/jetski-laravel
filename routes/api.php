@@ -83,6 +83,8 @@ Route::prefix('admin')->group(function(){
             Route::post('/{uuid}/employment', 'update_employment_information')->name('admin.members.employment.update');
         });
 
+        Route::get('/transactions', [MembershipController::class, 'all_transactions'])->name('admin.members.store.bulk');
+
         Route::controller(MenuCategoryController::class)->prefix('menu-categories')->group(function(){
             Route::get('/', 'index')->name('admin.menuCategory.index');
             Route::post('/', 'store')->name('admin.menuCategory.store');
