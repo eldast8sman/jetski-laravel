@@ -50,7 +50,7 @@ class SaveMembershipJob implements ShouldQueue
             'address' => $row['address'],
             'nationality' => $row['nationality'],
             'religion' => $row['religion'],
-            'photo' => "https://avatars.dicebear.com/api/initials/" . $row['first_name'].' '.$row['last_name'] . ".svg",
+            'photo' => "https://lagos-jetski-files.s3.us-east-2.amazonaws.com/ljs-placeholder.png",
             'dob' => Carbon::createFromFormat('Y-m-d', '1900-01-01')->addDays($row['birthday'] - 2)->toDateString(),
             'email' => $row['email_address'],
         ];

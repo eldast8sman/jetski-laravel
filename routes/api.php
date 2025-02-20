@@ -26,11 +26,13 @@ use App\Http\Controllers\OrderCartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RelativeController;
+use App\Http\Controllers\SparkleController;
 use App\Http\Controllers\WalletController;
 use App\Services\G5PosService;
 use App\Services\SparkleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 
 Route::prefix('admin')->group(function(){
@@ -264,6 +266,7 @@ Route::prefix('user')->group(function(){
     });
 });
 
+Route::get('/sparkle/webhook', [SparkleController::class, 'webhook']);
 Route::get('/g5-login', [G5PosService::class, 'login']);
 Route::get('/g5-members', [MembershipController::class, 'store_g5_members']);
 Route::get('/g5-menu', [MenuController::class, 'store_g5_menu']);
