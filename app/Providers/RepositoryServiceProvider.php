@@ -20,6 +20,7 @@ use App\Repositories\Interfaces\EmploymentDetailRepositoryInterface;
 use App\Repositories\Interfaces\EventRepositoryInterface;
 use App\Repositories\Interfaces\FoodMenuRepositoryInterface;
 use App\Repositories\Interfaces\InviteRepositoryInterface;
+use App\Repositories\Interfaces\JetskiEventRepositoryInterface;
 use App\Repositories\Interfaces\MemberRepositoryInterface;
 use App\Repositories\Interfaces\MembershipInformationRepositoryInterface;
 use App\Repositories\Interfaces\MenuCategoryRepositoryInterface;
@@ -34,6 +35,7 @@ use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Interfaces\UserWatercraftRepositoryInterface;
 use App\Repositories\Interfaces\WalletRepositoryInterface;
 use App\Repositories\InviteRepository;
+use App\Repositories\JetskiEventRepository;
 use App\Repositories\MemberRepository;
 use App\Repositories\MembershipInformationRepository;
 use App\Repositories\MenuCategoryRepository;
@@ -80,6 +82,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(FoodMenuRepositoryInterface::class, FoodMenuRepository::class);
         $this->app->bind(OrderCartItemRepositoryInterface::class, OrderCartItemRepository::class); 
         $this->app->bind(OrderCartRepositoryInterface::class, OrderCartRepository::class);
+        $this->app->bind(JetskiEventRepositoryInterface::class, JetskiEventRepository::class);
     }
 
     /**

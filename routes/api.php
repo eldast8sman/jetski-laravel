@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FoodMenuController;
+use App\Http\Controllers\Admin\JetskiEventController;
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
@@ -32,6 +33,7 @@ use App\Services\G5PosService;
 use App\Services\SparkleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -135,13 +137,13 @@ Route::prefix('admin')->group(function(){
             Route::get('/past', 'pastBookings')->name('admin.booking.past');
         });
 
-        Route::prefix('events')->controller(EventController::class)->group(function(){
-            Route::post('/', 'store')->name('admin.event.store');
-            Route::get('/', 'index')->name('admin.event.index');
-            Route::get('/past', 'past_events')->name('/admin.events.past');
-            Route::post('/{uuid}', 'update')->name('admin.event.update');
-            Route::delete('/{uuid}', 'destroy')->name('admin.event.delete');
-        });
+        // Route::prefix('events')->controller(EventController::class)->group(function(){
+        //     Route::post('/', 'store')->name('admin.event.store');
+        //     Route::get('/', 'index')->name('admin.event.index');
+        //     Route::get('/past', 'past_events')->name('/admin.events.past');
+        //     Route::post('/{uuid}', 'update')->name('admin.event.update');
+        //     Route::delete('/{uuid}', 'destroy')->name('admin.event.delete');
+        // });
 
         Route::prefix('announcements')->controller(AnnouncementController::class)->group(function(){
             Route::post('/', 'store')->name('admin.anouncement.store');
@@ -164,6 +166,10 @@ Route::prefix('admin')->group(function(){
             Route::get('/{uuid}', 'show')->name('admin.popupAds.update');
             Route::post('/{uuid}', 'update')->name('admin.popupAds.update');
             Route::delete('/{uuid}', 'destroy')->name('admin.popupAds.delete');
+        });
+
+        Route::prefix('events')->controller(JetskiEventController::class)->group(function(){
+            Route::get('/g5-tickets/refresh', 'refresh_ticketing')->name('admin.events.tickets.refresh');
         });
     });
 });
