@@ -15,6 +15,7 @@ class JetskiEvent extends Model
         'date_time',
         'date_from',
         'date_to',
+        'location_type',
         'location',
         'longitude',
         'latitude',

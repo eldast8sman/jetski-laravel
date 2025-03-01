@@ -14,7 +14,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jetski_event_tickets', function (Blueprint $table) {
+        Schema::create('jetski_event_bookings', function (Blueprint $table) {
             $table->id();
             $table->string('uuid')->unique();
             $table->foreignIdFor(EventTicketPricing::class, 'event_ticket_pricing_id');

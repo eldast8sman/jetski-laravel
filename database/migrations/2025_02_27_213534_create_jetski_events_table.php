@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('date_time');
             $table->date('date_from');
             $table->date('date_to');
+            $table->string('location_type')->default('Physical');
             $table->text('location')->nullable();
             $table->string('longitude')->nullable();
             $table->string('latitude')->nullable();

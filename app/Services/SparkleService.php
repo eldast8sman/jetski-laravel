@@ -57,6 +57,9 @@ class SparkleService
         return $this->responseHandler($response);
     }
     
+    public function transactions(){
+        
+    }
 
     public function getCustomerAccountwithId(int $id)
     {

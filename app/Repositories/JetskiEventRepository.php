@@ -119,7 +119,67 @@ class JetskiEventRepository extends AbstractRepository implements JetskiEventRep
         return $event;
     }
 
-    public function update_event(Request $request, $uuid){
+    public function update_event(Request $request, string $uuid){
+        $event = $this->findByUuid($uuid);
+        if(empty($event)){
+            $this->errors = "No Event found";
+            return false;
+        }
 
+        $all = $request->except(['photo', 'tickets_pricing']);
+
+        $pricing = [];
+
+        if(!empty($request->tickets_pricing)){
+            foreach($request->tickets_pricing as $pricing){
+                $ticket = EventTicketPricing::where('slug', $pricing)->first();
+                if(!empty($ticket)){
+                    $pricing[] = $ticket->id;
+                }
+            }
+        }
+        $all['tickets_pricing'] = $pricing;
+
+        if(!empty($request->photo)){
+            if($upload = FileManagerService::upload_file($request->photo, env('FILESYSTEM_DISK'))){
+                $all['photo'] = $upload->id;
+
+                $old_photo = $event->photo;
+            }
+        }
+
+        $all['details'] = $all['name'].' '.$all['description'];
+        $updated = $this->update($event->id, $this->sort_date($all));
+        if(!$updated){
+            $this->errors = $this->error_msg;
+            return false;
+        }
+
+        if(isset($old_photo)){
+            FileManagerService::delete($old_photo);
+        }
+
+        return $updated;
+    }
+    
+    public function delete_event(string $uuid)
+    {
+        $event = $this->findByUuid($uuid);
+        if(empty($event)){
+            $this->errors = "No Event found";
+            return false;
+        }
+
+        $deleted = $this->delete($event->id);
+        if(!$deleted){
+            $this->errors = $this->error_msg;
+            return false;
+        }
+
+        if(!empty($event->photo)){
+            FileManagerService::delete($event->photo);
+        }
+
+        return $deleted;
     }
 }
