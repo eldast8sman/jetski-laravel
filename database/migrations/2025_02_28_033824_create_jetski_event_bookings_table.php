@@ -17,12 +17,15 @@ return new class extends Migration
         Schema::create('jetski_event_bookings', function (Blueprint $table) {
             $table->id();
             $table->string('uuid')->unique();
-            $table->foreignIdFor(EventTicketPricing::class, 'event_ticket_pricing_id');
-            $table->foreignIdFor(JetskiEvent::class, 'jetski_event_id');
             $table->foreignIdFor(User::class, 'user_id');
-            $table->double('unit_price');
-            $table->integer('quantity');
-            $table->double('total_price');
+            $table->foreignIdFor(JetskiEvent::class, 'jetski_event_id');
+            $table->string('booking_reference');
+            $table->string('g5_order_number');
+            $table->string('g5_id');
+            $table->text('tickets');
+            $table->integer('total_quantity');
+            $table->double('total_amount');
+            $table->string('status');
             $table->timestamps();
         });
     }

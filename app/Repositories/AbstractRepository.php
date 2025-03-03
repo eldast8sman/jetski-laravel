@@ -71,7 +71,7 @@ class AbstractRepository implements AbstractRepositoryInterface
     public function findBy(array $criteria, $orderBy=[], $limit=null, $count=false){
         try {
             if(empty($criteria)){
-                return false;
+                return $this->all($orderBy, $limit, $count);  
             }
 
             $data = $this->model->where($criteria);

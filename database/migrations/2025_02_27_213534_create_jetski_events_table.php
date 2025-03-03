@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('latitude')->nullable();
             $table->string('photo_id')->nullable();
             $table->text('tickets_pricing')->nullable();
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

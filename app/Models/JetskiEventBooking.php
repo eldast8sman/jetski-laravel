@@ -8,18 +8,16 @@ class JetskiEventBooking extends Model
 {
     protected $fillable = [
         'uuid',
-        'event_ticket_pricing_id',
-        'jetski_event_id',
         'user_id',
-        'unit_price',
-        'quantity',
-        'total_price'
+        'booking_reference',
+        'g5_id',
+        'g5_order_number',
+        'jetski_event_id',
+        'tickets',
+        'total_quantity',
+        'total_amount',
+        'status'
     ];
-
-    public function eventTicketPricing()
-    {
-        return $this->belongsTo(EventTicketPricing::class, 'event_ticket_pricing_id', 'id');
-    }
 
     public function jetskiEvent()
     {
