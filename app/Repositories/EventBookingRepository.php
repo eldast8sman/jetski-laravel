@@ -6,6 +6,7 @@ use App\Models\EventTicketPricing;
 use App\Models\JetskiEvent;
 use App\Models\JetskiEventBooking;
 use App\Models\User;
+use App\Models\WalletTransaction;
 use App\Repositories\Interfaces\EventBookingRepositoryInterface;
 use App\Services\G5PosService;
 use Carbon\Carbon;
@@ -39,15 +40,19 @@ class EventBookingRepository extends AbstractRepository implements EventBookingR
             return false;
         }
 
+        $pricing_id = [];
         $pricing = json_decode($event->tickets_pricing, true);
+        foreach($pricing as $price){
+            $pricing_id[] = $price['id'];
+        }
 
         $tickets = [];
-        foreach($data['tickets'] as $ticket){
+        foreach($data as $ticket){
             $e_ticket = EventTicketPricing::where('uuid', $ticket['ticket_id'])->first();
             if(empty($e_ticket)){
                 continue;
             }
-            if(in_array($e_ticket->id, $pricing)){
+            if(in_array($e_ticket->id, $pricing_id)){
                 $tickets[] = [
                     'ticket' => $e_ticket,
                     'quantity' => $ticket['quantity']
@@ -91,56 +96,73 @@ class EventBookingRepository extends AbstractRepository implements EventBookingR
             'status' => 'Completed'
         ]);
 
+        $wallet = $user->wallet;
+        $wallet->balance -= $booking->total_amount;
+        $wallet->save();
+
+        WalletTransaction::create([
+            'wallet_id' => $wallet->id,
+            'amount' => $booking->total_amount,
+            'type' => 'Debit',
+            'uuid' => Str::uuid().'-'.time(),
+            'is_user_credited' => false,
+            'reason' => 'Event Ticket Purchase',
+            'reason_id' => $booking->id,
+            'payment_processor' => 'G5 POS',
+            'external_reference' => $booking->g5_id
+        ]);
+
         return $booking;
     }
 
     private function g5_order(array $tickets, User $user){
-        $g5 = new G5PosService();
-        $employee_code = config('g5pos.api_credentials.order_employee_code');
-        $getNumber = $g5->getOrderNumber();
-        $orderNumber = $getNumber[0]['OrderNumber'];
+        // $g5 = new G5PosService();
+        // $employee_code = config('g5pos.api_credentials.order_employee_code');
+        // $getNumber = $g5->getOrderNumber();
+        // $orderNumber = $getNumber[0]['OrderNumber'];
 
-        $orderData = [
-            'OrderNumber' => intval($orderNumber),
-            'OrderMenuID' => 2,
-            'UserID' => intval($employee_code),
-            'CustomerID' => intval($user->g5_id)
-        ];
+        // $orderData = [
+        //     'OrderNumber' => intval($orderNumber),
+        //     'OrderMenuID' => 2,
+        //     'UserID' => intval($employee_code),
+        //     'CustomerID' => intval($user->g5_id)
+        // ];
 
-        $orderId = $g5->newOrder($orderData);
+        // $orderId = $g5->newOrder($orderData);
 
-        $sel_items = [];
-        foreach($tickets as $ticket){
-            $sel_items[] = [
-                'ItemID' => intval($ticket['ticket']->g5_id),
-                'Quantity' => intval($ticket['quantity']),
-                'UsedPrice' => floatval($ticket['ticket']->price),
-                'CustomerNumber' => intval($user->g5_id),
-                'AffectedItem' => 0,
-                'VoidReasonID' => 0,
-                'Status' => 'selected',
-                'OrderbyEmployeeId' => intval($employee_code),
-                'PriceModeID' => 1,
-                'OrderingTime' => Carbon::now('Africa/Lagos')->format('Y-m-d'),
-                'ItemDescription' => $ticket['ticket']->name,
-                'ItemRemark' => '',
-                'inctax' => 0,
-                'SetMenu' => false
-            ];
-        }
+        // $sel_items = [];
+        // foreach($tickets as $ticket){
+        //     $sel_items[] = [
+        //         'ItemID' => intval($ticket['ticket']->g5_id),
+        //         'Quantity' => intval($ticket['quantity']),
+        //         'UsedPrice' => floatval($ticket['ticket']->price),
+        //         'CustomerNumber' => intval($user->g5_id),
+        //         'AffectedItem' => 0,
+        //         'VoidReasonID' => 0,
+        //         'Status' => 'selected',
+        //         'OrderbyEmployeeId' => intval($employee_code),
+        //         'PriceModeID' => 1,
+        //         'OrderingTime' => Carbon::now('Africa/Lagos')->format('Y-m-d'),
+        //         'ItemDescription' => $ticket['ticket']->name,
+        //         'ItemRemark' => '',
+        //         'inctax' => 0,
+        //         'SetMenu' => false
+        //     ];
+        // }
 
-         $saveData = [
-            'OrderID' => intval($orderId),
-            'selectedItems' => $sel_items
-        ];
-        $res = $g5->saveOrder($saveData);
+        //  $saveData = [
+        //     'OrderID' => intval($orderId),
+        //     'selectedItems' => $sel_items
+        // ];
+        // $res = $g5->saveOrder($saveData);
 
-        if(!filter_var($res, FILTER_VALIDATE_BOOLEAN)){
-            $this->errors = "Order can't be processed";
-            return false;
-        }
+        // if(!filter_var($res, FILTER_VALIDATE_BOOLEAN)){
+        //     $this->errors = "Order can't be processed";
+        //     return false;
+        // }
 
-        return ['g5_id' => $orderId, 'g5_order_number' => $orderNumber];
+        // return ['g5_id' => $orderId, 'g5_order_number' => $orderNumber];
+        return ['g5_id' => rand(100000, 999999), 'g5_order_number' => rand(100000, 999999)];
     }
 
     public function index($limit = 10, int $user_id)

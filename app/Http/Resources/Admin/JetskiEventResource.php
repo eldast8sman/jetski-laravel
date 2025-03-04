@@ -18,7 +18,7 @@ class JetskiEventResource extends JsonResource
             'uuid' => $this->uuid,
             'event_title' => $this->event_title,
             'description' => $this->description,
-            'audience' => $this->audience,
+            'audience' => json_decode($this->audience, true),
             'date_time' => json_decode($this->date_time, true),
             'location_type' => $this->location_type,
             'location' => $this->location,
@@ -26,7 +26,8 @@ class JetskiEventResource extends JsonResource
             'latitude' => $this->latitude,
             'photo' => $this->photo->url,
             'ticket_pricings' => $this->tickets(),
-            'bookings' => JetskiEventBookingResource::collection($this->bookings)
+            'bookings' => JetskiEventBookingResource::collection($this->bookings),
+            'status' => $this->status
         ];
     }
 }

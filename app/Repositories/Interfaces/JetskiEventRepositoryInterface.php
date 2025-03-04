@@ -17,4 +17,6 @@ interface JetskiEventRepositoryInterface extends AbstractRepositoryInterface
     public function update_event(Request $request, string $uuid);
 
     public function delete_event(string $uuid);
+
+    public function event_tickets($search="");
 }

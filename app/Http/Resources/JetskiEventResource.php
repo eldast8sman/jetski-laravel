@@ -19,6 +19,12 @@ class JetskiEventResource extends JsonResource
             'event_title' => $this->event_title,
             'description' => $this->description,
             'date_time' => json_decode($this->date_time, true),
+            'location_type' => $this->location_type,
+            'location' => $this->location,
+            'longitude' => $this->longitude,
+            'latitude' => $this->latitude,
+            'photo' => $this->photo->url,
+            'ticket_pricings' => $this->tickets()
         ];
     }
 }

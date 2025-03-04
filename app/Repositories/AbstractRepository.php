@@ -201,5 +201,6 @@ class AbstractRepository implements AbstractRepositoryInterface
 
     public function delete(Model $model){
         $model->delete();
+        return true;
     }
 }

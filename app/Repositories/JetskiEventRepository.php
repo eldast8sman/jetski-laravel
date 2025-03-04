@@ -8,6 +8,7 @@ use App\Repositories\Interfaces\JetskiEventRepositoryInterface;
 use App\Services\FileManagerService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class JetskiEventRepository extends AbstractRepository implements JetskiEventRepositoryInterface
 {
@@ -19,7 +20,7 @@ class JetskiEventRepository extends AbstractRepository implements JetskiEventRep
     }
 
     private function sort_date(array $data){
-        $date_times = $data['date_time'];
+        $date_times = json_decode($data['date_time'], true);
 
         $dates = [];
 
@@ -36,6 +37,7 @@ class JetskiEventRepository extends AbstractRepository implements JetskiEventRep
 
         $data['date_from'] = $start_date;
         $data['date_to'] = $end_date;
+        $data['audience'] = json_encode($data['audience']);
 
         return $data;
     }
@@ -60,15 +62,16 @@ class JetskiEventRepository extends AbstractRepository implements JetskiEventRep
     {
         $all = $request->except(['photo', 'tickets_pricing']);       
 
-        $all['tickets_pricing'] = !empty($request->tickets_pricing) ? $this->sort_ticketing($request->tickets_pricing) : "";
+        $all['tickets_pricing'] = !empty($request->tickets_pricing) ? $this->sort_ticketing(json_decode($request->tickets_pricing, true)) : "";
 
         if(!empty($request->photo)){
             if($upload = FileManagerService::upload_file($request->photo, env('FILESYSTEM_DISK'))){
-                $all['photo'] = $upload->id;
+                $all['photo_id'] = $upload->id;
             }
         }
 
-        $all['details'] = $all['name'].' '.$all['description'];
+        $all['uuid'] = Str::uuid().' '.time();
+        $all['details'] = $all['event_title'].' '.$all['description'];
         $event = $this->create($this->sort_date($all));
         return $event;
     }
@@ -140,17 +143,17 @@ class JetskiEventRepository extends AbstractRepository implements JetskiEventRep
 
         $all = $request->except(['photo', 'tickets_pricing']);
 
-        $all['tickets_pricing'] = !empty($request->tickets_pricing) ? $this->sort_ticketing($request->tickets_pricing) : "";
+        $all['tickets_pricing'] = !empty($request->tickets_pricing) ? $this->sort_ticketing(json_decode($request->tickets_pricing, true)) : "";
 
         if(!empty($request->photo)){
             if($upload = FileManagerService::upload_file($request->photo, env('FILESYSTEM_DISK'))){
-                $all['photo'] = $upload->id;
+                $all['photo_id'] = $upload->id;
 
-                $old_photo = $event->photo;
+                $old_photo = $event->photo_id;
             }
         }
 
-        $all['details'] = $all['name'].' '.$all['description'];
+        $all['details'] = $all['event_title'].' '.$all['description'];
         $updated = $this->update($event->id, $this->sort_date($all));
         if(!$updated){
             $this->errors = $this->error_msg;
@@ -172,16 +175,30 @@ class JetskiEventRepository extends AbstractRepository implements JetskiEventRep
             return false;
         }
 
-        $deleted = $this->delete($event->id);
+        $deleted = $this->delete($event);
         if(!$deleted){
             $this->errors = $this->error_msg;
             return false;
         }
 
         if(!empty($event->photo)){
-            FileManagerService::delete($event->photo);
+            FileManagerService::delete($event->photo_id);
         }
 
-        return $deleted;
+        return true;
+    }
+
+    public function event_tickets($search = ""){
+        parent::__construct(new EventTicketPricing());
+        $orderBy = [
+            ['name', 'asc']
+        ];
+        if(empty($search)){
+            $tickets = $this->all($orderBy);
+        } else {
+            $tickets = $this->findBy([['name', 'like', '%'.$search.'%']], $orderBy);
+        }
+
+        return $tickets;
     }
 }

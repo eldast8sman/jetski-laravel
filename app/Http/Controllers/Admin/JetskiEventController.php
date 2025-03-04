@@ -32,13 +32,21 @@ class JetskiEventController extends Controller
                 'Type' => 3
             ]);
 
-            dispatch(new StoreEventTicketPricingJob($tickets));
+            dispatch(new StoreEventTicketPricingJob(json_decode($tickets, true)));
 
             return $this->success_response('Ticketing refreshed successfully');
         } catch(Exception $e){
             Log::error('Refresh Ticketing: '.$e->getMessage());
             return $this->failed_response('Refresh failed. Check Logs for details');
         }
+    }
+
+    public function g5_tickets(){
+        $search = !empty($_GET['search']) ? $_GET['search'] : "";
+
+        $tickets = $this->event->event_tickets($search);
+
+        return $this->success_response('Tickets fetched successfully', $tickets);
     }
 
     public function store(StoreJetskiEventRequest $request){
@@ -94,5 +102,17 @@ class JetskiEventController extends Controller
         }
 
         return $this->success_response("Event deleted successfully");
+    }
+
+    public function event_activate(string $uuid){
+        $event = $this->event->findByUuid($uuid);
+        if(empty($event)){
+            return $this->failed_response("Event not found", 404);
+        }
+
+        $status = $event->status == 1 ? 0 : 1;
+        $updated = $this->event->update($event->id, ['status' => $status]);
+
+        return $this->success_response("Event ".($status == 1 ? "activated" : "deactivated")." successfully", new JetskiEventResource($updated));
     }
 }

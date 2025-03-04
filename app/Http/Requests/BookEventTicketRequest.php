@@ -24,7 +24,8 @@ class BookEventTicketRequest extends FormRequest
         return [
             'event_id' => 'required|string|exists:jetski_events,uuid',
             'tickets' => 'required|array',
-            'tickets.*.ticket_id' => 'required|string|exists:event_ticket_pricings,uuid'
+            'tickets.*.ticket_id' => 'required|string|exists:event_ticket_pricings,uuid',
+            'tickets.*.quantity' => 'required|integer|min:1'
         ];
     }
 }
