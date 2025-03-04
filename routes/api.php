@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FoodMenuController;
+use App\Http\Controllers\Admin\JetskiEventController;
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController as ControllersEventController;
 use App\Http\Controllers\FoodMenuController as ControllersFoodMenuController;
+use App\Http\Controllers\JetskiEventController as ControllersJetskiEventController;
 use App\Http\Controllers\MembershipController as ControllersMembershipController;
 use App\Http\Controllers\MenuController as ControllersMenuController;
 use App\Http\Controllers\NotificationImageController;
@@ -32,6 +34,7 @@ use App\Services\G5PosService;
 use App\Services\SparkleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -135,13 +138,13 @@ Route::prefix('admin')->group(function(){
             Route::get('/past', 'pastBookings')->name('admin.booking.past');
         });
 
-        Route::prefix('events')->controller(EventController::class)->group(function(){
-            Route::post('/', 'store')->name('admin.event.store');
-            Route::get('/', 'index')->name('admin.event.index');
-            Route::get('/past', 'past_events')->name('/admin.events.past');
-            Route::post('/{uuid}', 'update')->name('admin.event.update');
-            Route::delete('/{uuid}', 'destroy')->name('admin.event.delete');
-        });
+        // Route::prefix('events')->controller(EventController::class)->group(function(){
+        //     Route::post('/', 'store')->name('admin.event.store');
+        //     Route::get('/', 'index')->name('admin.event.index');
+        //     Route::get('/past', 'past_events')->name('/admin.events.past');
+        //     Route::post('/{uuid}', 'update')->name('admin.event.update');
+        //     Route::delete('/{uuid}', 'destroy')->name('admin.event.delete');
+        // });
 
         Route::prefix('announcements')->controller(AnnouncementController::class)->group(function(){
             Route::post('/', 'store')->name('admin.anouncement.store');
@@ -164,6 +167,18 @@ Route::prefix('admin')->group(function(){
             Route::get('/{uuid}', 'show')->name('admin.popupAds.update');
             Route::post('/{uuid}', 'update')->name('admin.popupAds.update');
             Route::delete('/{uuid}', 'destroy')->name('admin.popupAds.delete');
+        });
+
+        Route::prefix('events')->controller(JetskiEventController::class)->group(function(){
+            Route::get('/g5-tickets/refresh', 'refresh_ticketing')->name('admin.events.tickets.refresh');
+            Route::get('/g5-tickets/search', 'g5_tickets')->name('admin.events.tickets.search');
+            Route::post('/', 'store')->name('admin.events.store');
+            Route::get('/', 'index')->name('admin.events.index');
+            Route::get('/upcoming/fetch', 'upcoming_events')->name('admin.events.upcoming');
+            Route::get('/{uuid}', 'show')->name('admin.events.show');
+            Route::post('/{uuid}', 'update')->name('admin.events.update');
+            Route::get('/{uuid}/display', 'event_activate')->name('admin.events.activate');
+            Route::delete('/{uuid}', 'destroy')->name('admin.events.delete');
         });
     });
 });
@@ -235,18 +250,26 @@ Route::prefix('user')->group(function(){
             Route::post('/{uuid}', 'modify_order')->name('user.cart.modify');
         });
 
-        Route::prefix('bookings')->controller(BookingController::class)->group(function(){
-            Route::get('/', 'index')->name('user.booking.index');
-            Route::get('/past', 'pastBookings')->name('user.booking.past');
-            Route::get('/{uuid}', 'show')->name('user.booking.show');
-            Route::post('/', 'store')->name('user.booking.store');
-            Route::post('/{uuid}', 'update')->name('user.booking.update');
-            Route::delete('/{uuid}', 'destroy')->name('user.booking,delete');
-        });
+        // Route::prefix('bookings')->controller(BookingController::class)->group(function(){
+        //     Route::get('/', 'index')->name('user.booking.index');
+        //     Route::get('/past', 'pastBookings')->name('user.booking.past');
+        //     Route::get('/{uuid}', 'show')->name('user.booking.show');
+        //     Route::post('/', 'store')->name('user.booking.store');
+        //     Route::post('/{uuid}', 'update')->name('user.booking.update');
+        //     Route::delete('/{uuid}', 'destroy')->name('user.booking,delete');
+        // });
 
-        Route::prefix('events')->controller(ControllersEventController::class)->group(function(){
+        // Route::prefix('events')->controller(ControllersEventController::class)->group(function(){
+        //     Route::get('/', 'index')->name('user.event.index');
+        //     Route::get('/past', 'pastEvents')->name('user.event.past');
+        // });
+
+        Route::prefix('events')->controller(ControllersJetskiEventController::class)->group(function(){
             Route::get('/', 'index')->name('user.event.index');
-            Route::get('/past', 'pastEvents')->name('user.event.past');
+            Route::get('/upcoming/fetch', 'upcoming_events')->name('user.event.upcoming');
+            Route::get('/{uuid}', 'show')->name('user.event.show');
+            Route::post('/', 'book_tickets')->name('user.event.book');
+            Route::get('/bookings/all', 'booking_index')->name('user.event.bookings');
         });
 
         Route::prefix('payments')->controller(PaymentController::class)->group(function(){
