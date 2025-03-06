@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Get the Elastic Beanstalk environment name
-ENV_NAME=$(aws elasticbeanstalk describe-environments --query "Environments[?Status=='Ready'].EnvironmentName" --output text)
+INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+ENV_NAME=$(aws elasticbeanstalk describe-environments --query "Environments[?contains(Instances, '$INSTANCE_ID')].EnvironmentName" --output text)
 
 # Define S3 paths for different environments
 if [[ "$ENV_NAME" == "LagosJetski-env" ]]; then
