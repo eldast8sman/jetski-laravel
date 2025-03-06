@@ -7,7 +7,7 @@ ENV_NAME=$(aws elasticbeanstalk describe-environments --query "Environments[?Sta
 if [[ "$ENV_NAME" == "LagosJetski-env" ]]; then
     ENV_FILE="s3://projectjson/env_variables.json"
 elif [[ "$ENV_NAME" == "Jetski-Production-env" ]]; then
-    ENV_FILE="s3://projectjson/env_variables_prod.json"=
+    ENV_FILE="s3://projectjson/env_variables_prod.json"
 else
     echo "Unknown environment: $ENV_NAME"
     exit 1
