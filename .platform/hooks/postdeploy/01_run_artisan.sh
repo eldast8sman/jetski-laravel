@@ -1,7 +1,20 @@
 #!/bin/bash
 
+# Get the Elastic Beanstalk environment name
+ENV_NAME=$(aws elasticbeanstalk describe-environments --query "Environments[?Status=='Ready'].EnvironmentName" --output text)
+
+# Define S3 paths for different environments
+if [[ "$ENV_NAME" == "LagosJetski-env" ]]; then
+    ENV_FILE="s3://projectjson/env_variables.json"
+elif [[ "$ENV_NAME" == "Jetski-Production-env" ]]; then
+    ENV_FILE="s3://projectjson/env_variables_prod.json"=
+else
+    echo "Unknown environment: $ENV_NAME"
+    exit 1
+fi
+
 # Download env.json file from S3 bucket
-aws s3 cp s3://projectjson/env_variables.json /tmp/env.json
+aws s3 cp "$ENV_FILE" /tmp/env.json
 
 # Parse env.json and create .env file
 cat /tmp/env.json | jq -r 'to_entries[] | "\(.key)=\(.value)"' > /var/app/current/.env

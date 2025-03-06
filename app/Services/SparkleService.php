@@ -70,6 +70,11 @@ class SparkleService
         return $this->responseHandler($response);
     }
 
+    public function getTransactionsPeriodically($start_date, $end_date)
+    {
+        $url = $this->base_url = "/transactions?";
+    }
+
     public function responseHandler(Response $response){
         if ($response->failed()) {
             Log::error($response->throw()->json());
@@ -103,7 +108,8 @@ class SparkleService
                 'amount' => $data['amount'],
                 'type' => 'Credit',
                 'is_user_credited' => false,
-                'payment_processor' => 'SPARKLE'
+                'payment_processor' => 'SPARKLE',
+                'external_reference' => $data['external_reference']
             ]);
         }
         $wallet->balance += $data['amount'];
