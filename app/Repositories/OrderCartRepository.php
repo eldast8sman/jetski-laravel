@@ -323,15 +323,15 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
 
         $order = $this->place_order($all, $user);
 
-        if(!$this->g5_place($order)){
-            return false;
-            $order->delete();
-        }
+        // if(!$this->g5_place($order)){
+        //     return false;
+        //     $order->delete();
+        // }
 
-        $order->status = "Processing";
-        $order->save();
+        // $order->status = "Processing";
+        // $order->save();
 
-        $this->track_order($order, 'Processing', 'admin', $admin->id);
+        // $this->track_order($order, 'Processing', 'admin', $admin->id);
 
         return $order;
     }
