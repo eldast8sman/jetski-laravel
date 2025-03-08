@@ -1,5 +1,22 @@
 <?php
 
+$type = env('ENV_TYPE', 'LOCAL');
+if($type == 'PRODUCTION'){
+    $name = env('APP_NAME_PROD');
+    $env = env('APP_ENV_PROD');
+    $debug = env('APP_DEBUG_PROD');
+    $url = env('APP_URL_PROD');
+} elseif($type == 'STAGING'){
+    $name = env('APP_NAME_DEV');
+    $env = env('APP_ENV_DEV');
+    $debug = env('APP_DEBUG_DEV');
+    $url = env('APP_URL_DEV');
+} else {
+    $name = env('APP_NAME');
+    $env = env('APP_ENV');
+    $debug = env('APP_DEBUG');
+    $url = env('APP_URL');
+}
 return [
 
     /*
@@ -13,7 +30,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => $name,
 
     /*
     |--------------------------------------------------------------------------
@@ -26,7 +43,7 @@ return [
     |
     */
 
-    'env' => env('APP_ENV', 'production'),
+    'env' => $env,
 
     /*
     |--------------------------------------------------------------------------
@@ -39,7 +56,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool) $debug,
 
     /*
     |--------------------------------------------------------------------------
@@ -52,7 +69,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => $url,
 
     /*
     |--------------------------------------------------------------------------
