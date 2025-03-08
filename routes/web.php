@@ -8,3 +8,7 @@ Route::controller(InviteController::class)->group(function(){
     Route::post('/booking-invite/{id}', 'store')->name('accept.invite');
     
 });
+
+Route::get('/', function(){
+    return view('welcome');
+});
