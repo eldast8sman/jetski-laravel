@@ -1,5 +1,14 @@
 <?php
 
+$type = env('ENV_TYPE', 'LOCAL');
+if($type == 'PRODUCTION'){
+    $secret = env('JWT_SECRET_PROD');
+} elseif($type == 'STAGING'){
+    $secret = env('JWT_SECRET_DEV');
+} else {
+    $secret = env('JWT_SECRET');
+}
+
 /*
  * This file is part of jwt-auth.
  *
@@ -25,7 +34,7 @@ return [
     |
     */
 
-    'secret' => env('JWT_SECRET'),
+    'secret' => $secret,
 
     /*
     |--------------------------------------------------------------------------

@@ -1,5 +1,25 @@
 <?php
 
+$type = env('ENV_TYPE', 'LOCAL');
+if($type == 'PRODUCTION'){
+    $host = env('MAIL_HOST_PROD');
+    $port = env('MAIL_PORT_PROD');
+    $username = env('MAIL_USERNAME_PROD');
+    $password = env('MAIL_PASSWORD_PROD');
+    $address = env('MAIL_FROM_ADDRESS_PROD');
+} elseif($type == 'STAGING'){
+    $host = env('MAIL_HOST_DEV');
+    $port = env('MAIL_PORT_DEV');
+    $username = env('MAIL_USERNAME_DEV');
+    $password = env('MAIL_PASSWORD_DEV');
+    $address = env('MAIL_FROM_ADDRESS_DEV');
+} else {
+    $host = env('MAIL_HOST');
+    $port = env('MAIL_PORT');
+    $username = env('MAIL_USERNAME');
+    $password = env('MAIL_PASSWORD');
+    $address = env('MAIL_FROM_ADDRESS');
+}
 return [
 
     /*
@@ -40,11 +60,11 @@ return [
         'smtp' => [
             'transport' => 'smtp',
             'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', '127.0.0.1'),
+            'host' => $host,
             'port' => env('MAIL_PORT', 2525),
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
+            'username' => $username,
+            'password' => $password,
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
