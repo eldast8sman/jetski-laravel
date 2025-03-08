@@ -43,9 +43,10 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
                 $add_ons = $sorted['add_ons'];
                 $add_on_price = $sorted['total_price'];
             }
+            
             $total_unit_price = $item->amount + $add_on_price;
             $total_price = $total_unit_price * $data['quantity'];
-            $cart_item = $this->create([
+            $data = [
                 'uuid' => Str::uuid().'-'.time(),
                 'user_id' => $data['user_id'],
                 'food_menu_id' => $item->id,
@@ -55,7 +56,9 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
                 'total_unit_price' => $total_unit_price,
                 'quantity' => $data['quantity'],
                 'total_price' => $total_price
-            ]);
+            ];
+            
+            $cart_item = $this->create($data);
 
             return $cart_item;
         } catch(\Exception $e){
@@ -120,8 +123,8 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
             foreach($availability_times as $availability_time){
                 if($availability_time['day'] == $today){
                     if($availability_time['status'] == 'Opened'){
-                        $start = Carbon::parse($availability_time['start']);
-                        $end = Carbon::parse($availability_time['end']);
+                        $start = Carbon::parse($availability_time['from']);
+                        $end = Carbon::parse($availability_time['to']);
                         if($now->between($start, $end)){
                             $availability = true;
                             break;
