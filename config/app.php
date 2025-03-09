@@ -1,22 +1,5 @@
 <?php
 
-$type = env('ENV_TYPE', 'LOCAL');
-if($type == 'PRODUCTION'){
-    $name = env('APP_NAME_PROD');
-    $env = env('APP_ENV_PROD');
-    $debug = env('APP_DEBUG_PROD');
-    $url = env('APP_URL_PROD');
-} elseif($type == 'STAGING'){
-    $name = env('APP_NAME_DEV');
-    $env = env('APP_ENV_DEV');
-    $debug = env('APP_DEBUG_DEV');
-    $url = env('APP_URL_DEV');
-} else {
-    $name = env('APP_NAME');
-    $env = env('APP_ENV');
-    $debug = env('APP_DEBUG');
-    $url = env('APP_URL');
-}
 return [
 
     /*
@@ -30,7 +13,7 @@ return [
     |
     */
 
-    'name' => $name,
+    'name' => env('APP_NAME'),
 
     /*
     |--------------------------------------------------------------------------
@@ -43,7 +26,7 @@ return [
     |
     */
 
-    'env' => $env,
+    'env' => env('APP_ENV'),
 
     /*
     |--------------------------------------------------------------------------
@@ -56,7 +39,7 @@ return [
     |
     */
 
-    'debug' => (bool) $debug,
+    'debug' => (bool) env('APP_DEBUG'),
 
     /*
     |--------------------------------------------------------------------------
@@ -69,7 +52,7 @@ return [
     |
     */
 
-    'url' => $url,
+    'url' =>env('APP_URL'),
 
     /*
     |--------------------------------------------------------------------------
