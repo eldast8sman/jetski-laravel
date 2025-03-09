@@ -9,10 +9,13 @@ RUN apk update && apk add --no-cache \
     libzip-dev \
     oniguruma-dev \
     icu-dev \
-    $PHPIZE_DEPS
+    $PHPIZE_DEPS \
+    libgd \
+    gd-dev \
+    supervisor
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql zip intl mbstring
+RUN docker-php-ext-install pdo_mysql zip intl mbstring gd
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -24,19 +27,27 @@ WORKDIR /var/www/html
 COPY . .
 
 # Install PHP dependencies
+RUN git config --global --add safe.directory /var/www/html
 RUN composer install --no-dev --optimize-autoloader
-
-# Copy environment file
-COPY .env.example .env
 
 # Generate application key
 RUN php artisan key:generate
 
-# Set storage permissions
-RUN chmod -R 777 storage bootstrap/cache
+# Make Storage writable and run artisan commands
+RUN chown -R www-data:www-data storage bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache && \
+    php artisan migrate --force && \
+    php artisan config:clear && \
+    php artisan cache:clear && \
+    php artisan view:clear && \
+    php artisan storage:link #&& \
+    # php artisan db:seed --force # Uncomment if needed
+
+# Copy Supervisor configuration file
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Expose port 9000
 EXPOSE 9000
 
-# Start PHP-FPM server
-CMD ["php-fpm"]
+# Start Supervisor and PHP-FPM
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
