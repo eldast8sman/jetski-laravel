@@ -27,7 +27,7 @@ class MenuRepository extends AbstractRepository implements MenuRepositoryInterfa
             $service = new G5PosService();
 
             $menus = $service->getMenu([
-                'ScreenID' => 45,
+                'ScreenID' => 1,
                 'Type' => 3
             ]);
 
