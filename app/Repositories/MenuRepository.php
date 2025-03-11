@@ -27,16 +27,16 @@ class MenuRepository extends AbstractRepository implements MenuRepositoryInterfa
             $service = new G5PosService();
 
             $menus = $service->getMenu([
-                'ScreenID' => 1,
+                'ScreenID' => 45,
                 'Type' => 3
             ]);
 
-            $menus = json_decode($menus, true);
-            foreach($menus as $menu){
-                StoreMenuJob::dispatch($menu);
-            }
+            // $menus = json_decode($menus, true);
+            // foreach($menus as $menu){
+            //     StoreMenuJob::dispatch($menu);
+            // }
 
-            return $menus;
+            return json_decode($menus, true);
         } catch (Exception $e){
             $this->errors = $e->getMessage();
             return false;
