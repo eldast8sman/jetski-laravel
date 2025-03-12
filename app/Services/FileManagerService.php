@@ -51,7 +51,7 @@ class FileManagerService
             'disk' => $disk,
             'path' => $upload,
             'url' => Storage::disk($disk)->url($upload),
-            'size' => Storage::disk($disk)->size($upload),
+            'size' => 2000, //Storage::disk($disk)->size($upload),
             'extension' => $extension,
             'filename' => $filename
         ]);
