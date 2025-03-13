@@ -120,7 +120,9 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
             ]);
         }
 
-        UserRegistered::dispatch($user);
+        if($user->email == 'uzomad@mac.com'){
+            UserRegistered::dispatch($user);
+        }
 
         return $user;
     }
