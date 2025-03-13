@@ -19,7 +19,8 @@ class AllFoodMenuResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'amount' => $this->amount,
-            'photo' => ($this->photos()->count() > 0) ? $this->photos()->first()->file_manager->url : null
+            'photo' => ($this->photos()->count() > 0) ? $this->photos()->first()->file_manager->url : null,
+            'type' => $this->type,
         ];
     }
 }

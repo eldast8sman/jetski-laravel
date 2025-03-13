@@ -4,11 +4,13 @@ namespace App\Providers;
 
 use App\Models\Admin;
 use App\Models\Booking;
+use App\Models\FoodMenu;
 use App\Models\Order;
 use App\Models\OrderCart;
 use App\Models\OrderCartItem;
 use App\Observers\AdminObserver;
 use App\Observers\BookingObserver;
+use App\Observers\FoodMenuObserver;
 use App\Observers\OrderCartItemObserver;
 use App\Observers\OrderCartObserver;
 use App\Observers\OrderObserver;
@@ -34,5 +36,6 @@ class ObserverServiceProvider extends ServiceProvider
         Order::observe(OrderObserver::class);
         OrderCartItem::observe(OrderCartItemObserver::class);
         OrderCart::observe(OrderCartObserver::class);
+        FoodMenu::observe(FoodMenuObserver::class);
     }
 }

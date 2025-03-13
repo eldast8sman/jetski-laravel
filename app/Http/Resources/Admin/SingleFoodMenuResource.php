@@ -29,6 +29,7 @@ class SingleFoodMenuResource extends JsonResource
             'is_stand_alone' => $this->is_stand_alone,
             'is_add_on' => $this->is_add_on,
             'add_ons' => ($this->add_ons() !== null) ? MenuAddOnResource::collection($this->add_ons()->get()) : null,
+            'modifiers' => ($this->modifiers() !== null) ? MenuAddOnResource::collection($this->modifiers()->get()) : null, 
             'photos' => ($this->photos()->count() > 0) ? MenuPhotoResource::collection($this->photos) : null
         ];
     }

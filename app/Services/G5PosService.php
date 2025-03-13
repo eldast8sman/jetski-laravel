@@ -94,9 +94,9 @@ class G5PosService
       return $this->response_handler($response);
     }
   
-    public function getModifiers(array $data) //Done
+    public function getModifiers($modifier_id) //Done
     {
-      $response = Http::withToken($this->token)->get("{$this->base_url}/PosOrder/GetModifierList/{$data['ModifierID']}", $data);
+      $response = Http::withToken($this->token)->get("{$this->base_url}/PosOrder/GetModifierList/{$modifier_id}");
   
       return $this->response_handler($response);
     }

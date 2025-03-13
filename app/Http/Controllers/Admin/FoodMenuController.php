@@ -38,24 +38,25 @@ class FoodMenuController extends Controller
 
             $menus = json_decode($menus, true);
 
-            $ref = Str::random(20).time();
-            $this->menu->track_screen($ref, 1);
-            foreach($menus as $menu){
-                StoreFoodMenuJob::dispatch($menu, $ref);
-            }
+            return $menus;
 
-            return $this->success_response('Menu refreshed successfully');
+            // $ref = Str::random(20).time();
+            // $this->menu->track_screen($ref, 1);
+            // foreach($menus as $menu){
+            //     StoreFoodMenuJob::dispatch($menu, 1, $ref);
+            // }
+
+            // return $this->success_response('Menu refreshed successfully');
         } catch(\Exception $e){
             Log::error('Store G5 Menu: '.$e->getMessage());
             return $this->failed_response('Refresh failed. Check Logs for details');
         }
     }
 
-    public function index(Request $request){
-        $limit = $request->has('limit') ? (int)$request->limit : 9;
-        $category_id = $request->has('category') ? (string)$request->category : null;
+    public function index(Request $request, $screen_uuid=1){
+        $limit = $request->has('limit') ? (int)$request->limit : 10;
         $search = $request->has('search') ? (string)$request->search: "";
-        $menus = $this->menu->index($limit, $category_id, $search);
+        $menus = $this->menu->index($screen_uuid, $limit, $search);
         if(!$menus){
             return $this->failed_response($this->menu->errors);
         }
