@@ -70,8 +70,8 @@ class MembershipController extends Controller
         return $this->success_response("Users added to DB", $users);
     }
 
-    public function resend_activation_link(User $user){
-        if(!$this->user->resend_activation_link($user)){
+    public function resend_activation_link($uuid){
+        if(!$this->user->resend_activation_link($uuid)){
             return $this->failed_response($this->user->errors, 400);
         }
         return $this->success_response("Email verification Link successfully sent");

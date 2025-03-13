@@ -75,7 +75,7 @@ Route::prefix('admin')->group(function(){
             Route::get('/', 'index')->name('admin.members.index');
             Route::post('/', 'store')->name('admin.members.store');
             Route::post('/bulk', 'store_bulk')->name('admin.members.store.bulk');
-            Route::get('/{user}/verification-resend', 'resend_activation_link')->name('admin.members.verificationLinkResend');
+            Route::get('/{uuid}/verification-resend', 'resend_activation_link')->name('admin.members.verificationLinkResend');
             Route::get('/{uuid}', 'show')->name('admin.members.show');
             Route::post('/{uuid}/activation', 'user_activation')->name('admin.members.activation');
             Route::get('/{uuid}/wallet', 'wallet')->name('admin.members.wallet');

@@ -17,7 +17,7 @@ interface MemberRepositoryInterface extends AbstractRepositoryInterface
 
     public function all_members($limit=null);
 
-    public function resend_activation_link(User $user);
+    public function resend_activation_link($uuid);
 
     public function update_user(User $user, array $data);
 
