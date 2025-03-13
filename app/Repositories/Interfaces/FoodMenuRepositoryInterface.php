@@ -23,4 +23,6 @@ interface FoodMenuRepositoryInterface extends AbstractRepositoryInterface
     public function fetch_add_ons(string $search="");
 
     public function delivery_fees($limit=10, $search="");
+
+    public function track_screen($ref, $screen_id) : bool;
 }

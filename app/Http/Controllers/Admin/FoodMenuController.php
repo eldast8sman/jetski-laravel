@@ -14,6 +14,7 @@ use App\Repositories\Interfaces\MenuCategoryRepositoryInterface;
 use App\Services\G5PosService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class FoodMenuController extends Controller
 {
@@ -36,8 +37,11 @@ class FoodMenuController extends Controller
             ]);
 
             $menus = json_decode($menus, true);
+
+            $ref = Str::random(20).time();
+            $this->menu->track_screen($ref, 1);
             foreach($menus as $menu){
-                StoreFoodMenuJob::dispatch($menu);
+                StoreFoodMenuJob::dispatch($menu, $ref);
             }
 
             return $this->success_response('Menu refreshed successfully');

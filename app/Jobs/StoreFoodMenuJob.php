@@ -14,11 +14,13 @@ class StoreFoodMenuJob implements ShouldQueue
     use Queueable;
 
     protected $data;
+    protected $parent_id;
+    protected $ref;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(array $data)
+    public function __construct(array $data, $parent_id, $ref)
     {
         $this->data = $data;
     }
@@ -29,7 +31,7 @@ class StoreFoodMenuJob implements ShouldQueue
             'name' => ucwords(strtolower($data['DisplayName'])),
             'amount' => $data['PriceMode1'],
             'g5_id' => $data['ItemID'],
-            'parent_id' => $data['ParentID'],
+            'parent_id' => $parent_id ?? $data['ParentID'],
             'modifier_id' => $data['Modifier1']
         ];
 

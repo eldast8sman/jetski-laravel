@@ -15,6 +15,7 @@ class FoodMenu extends Model
         'uuid',
         'slug',
         'menu_category_id',
+        'type',
         'name',
         'description',
         'amount',

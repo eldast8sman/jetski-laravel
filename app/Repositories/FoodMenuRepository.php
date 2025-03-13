@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\FoodMenu;
 use App\Models\FoodMenuPhoto;
 use App\Models\MenuCategory;
+use App\Models\MenuScreenTracker;
 use App\Repositories\Interfaces\FoodMenuRepositoryInterface;
 use App\Services\FileManagerService;
 use Carbon\Carbon;
@@ -176,5 +177,15 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
         }
 
         return $fees->paginate($limit);
+    }
+
+    public function track_screen($ref, $screen_id) : bool
+    {
+        if(empty(MenuScreenTracker::where('ref', $ref)->where('screen_id', $screen_id)->first())){
+            MenuScreenTracker::create(['ref' => $ref, 'screen_id' => $screen_id]);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
