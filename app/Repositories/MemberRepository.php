@@ -161,8 +161,13 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
         return $users;
     }
 
-    public function resend_activation_link(User $user)
+    public function resend_activation_link($uuid)
     {
+        $user = $this->findByUuid($uuid);
+        if(empty($user)){
+            $this->errors = "No User was fetched";
+            return false;
+        }
         if($user->email_verified == 1){
             $this->errors = "Email already verified";
             return false;
