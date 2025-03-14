@@ -12,6 +12,7 @@ class OrderCartItem extends Model
         'order_cart_id',
         'food_menu_id',
         'add_ons',
+        'modifier',
         'add_on_price',
         'unit_price',
         'total_unit_price',
@@ -32,6 +33,10 @@ class OrderCartItem extends Model
     public function food_menu()
     {
         return $this->belongsTo(FoodMenu::class);
+    }
+
+    public function modifer(){
+        return FoodMenu::find($this->modifier_id);
     }
 
     public function sorted_add_ons($type='user')

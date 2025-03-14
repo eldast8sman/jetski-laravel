@@ -3,11 +3,13 @@
 namespace App\Repositories;
 
 use App\Events\UserRegistered;
+use App\Mail\AddUserNotificationMail;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Repositories\Interfaces\UserRelativeRepositoryInterface;
 use App\Services\FileManagerService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class UserRelativeRepository extends AbstractRepository implements UserRelativeRepositoryInterface
@@ -117,6 +119,15 @@ class UserRelativeRepository extends AbstractRepository implements UserRelativeR
 
         $user->can_use = $request->status;
         $user->save();
+        if(($user->can_use == 1) and (empty($user->password))){
+            $user->verification_token = mt_rand(111111, 999999);
+            $user->verification_token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
+            $user->save();
+
+            $user->name = $user->firstname;
+            Mail::to($user)->send(new AddUserNotificationMail($user->name, $user->verification_token, $user->email));
+        }
+
         return $user;
     }
 

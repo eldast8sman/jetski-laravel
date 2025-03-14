@@ -41,7 +41,7 @@ class SaveMembershipJob implements ShouldQueue
             }
         }
         $data = [
-            'g5_id' => $row['id_number'],
+            'membership_id' => $row['id_number'],
             'firstname' => $row['first_name'],
             'lastname' => $row['last_name'],
             'phone' => $row['mobile_number'],
@@ -54,9 +54,15 @@ class SaveMembershipJob implements ShouldQueue
             'dob' => Carbon::createFromFormat('Y-m-d', '1900-01-01')->addDays($row['birthday'] - 2)->toDateString(),
             'email' => $row['email_address'],
         ];
-        if(isset($membership_id)){
-            $data['membership_id'] = $membership_id;
+        if(isset($row['parent_id']) and !empty($row['parent_id'])){
+            $parent = User::where('membership_id', $row['parent_id'])->first();
+            if(!empty($parent)){
+                $data['parent_id'] = $parent->id;
+            }
         }
+        // if(isset($membership_id)){
+        //     $data['membership_id'] = $membership_id;
+        // }
 
         $user = $this->repo->keep($data);
         if($user){

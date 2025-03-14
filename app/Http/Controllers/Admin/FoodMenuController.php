@@ -41,7 +41,7 @@ class FoodMenuController extends Controller
             $ref = Str::random(20).time();
             $this->menu->track_screen($ref, 1);
             foreach($menus as $menu){
-                StoreFoodMenuJob::dispatch($menu, $ref);
+                StoreFoodMenuJob::dispatch($menu, 1, $ref);
             }
 
             return $this->success_response('Menu refreshed successfully');
@@ -51,21 +51,26 @@ class FoodMenuController extends Controller
         }
     }
 
-    public function index(Request $request){
-        $limit = $request->has('limit') ? (int)$request->limit : 9;
-        $category_id = $request->has('category') ? (string)$request->category : null;
+    public function index(Request $request, $screen_uuid=1){
+        $limit = $request->has('limit') ? (int)$request->limit : 10;
         $search = $request->has('search') ? (string)$request->search: "";
-        $menus = $this->menu->index($limit, $category_id, $search);
+        $menus = $this->menu->index($screen_uuid, $limit, $search);
         if(!$menus){
             return $this->failed_response($this->menu->errors);
         }
         return $this->success_response('Food Menu fetched successfully', AllFoodMenuResource::collection($menus)->response()->getData(true));
     }
 
-    public function new_menu(Request $request){
+    public function new_menu(Request $request, $screen_uuid){
         $limit = $request->has('limit') ? (int)$request->limit : 9;
         $search = $request->has('search') ? $request->search : "";
-        $menus = $this->menu->new_menu($limit, $search);
+        $menus = $this->menu->new_menu($screen_uuid, $limit, $search);
+        if(!$menus){
+            return $this->failed_response($this->menu->errors);
+        }
+        if(empty($menus)){
+            return $this->failed_response("No New Food Menu for this Screen", 404);
+        }
         return $this->success_response("Food Menu fetched successfully", AllFoodMenuResource::collection($menus)->response()->getData(true));
     }
 

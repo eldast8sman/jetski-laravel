@@ -21,17 +21,23 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
         parent::__construct($menu);
     }
 
-    public function index($limit=10, $category_id=null, $search="")
+    public function index($screen_uuid=1, $limit=10, $search="")
     {
-        $criteria = [
-            ['is_stand_alone', '=', 1]
-        ];
-        if(!empty($category_id)){
-            $category = MenuCategory::where('uuid', $category_id)->first();
-            if(!empty($category)){
-                $criteria[] = ['menu_category_id', '=', $category->id];
+        if($screen_uuid != 1){
+            $screen = $this->findByUuid($screen_uuid);
+            if(empty($screen) or ($screen->type != 'screen')){
+                $this->errors ="Wrong screen";
+                return false;
             }
-        };
+            $screen_id = $screen->g5_id;
+        } else {
+            $screen_id = 1;
+        }
+        $criteria = [
+            ['is_stand_alone', '=', 1],
+            ['parent_id', '=', $screen_id]
+        ];
+
         if(!empty($search)){
             $criteria[] = ['name', 'like', '%'.$search.'%'];
         }
@@ -42,26 +48,44 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
         return $menus;
     }
 
-    public function user_index($limit = 10, $category_id = null, $search = "")
+    public function user_index($screen_uuid=1, $limit = 10, $search = "")
     {
         $menu = FoodMenu::isValid();
-        if(!empty($category_id)){
-            $category = MenuCategory::where('uuid', $category_id)->first();
-            if(!empty($category)){
-                $menu = $menu->where('menu_category_id', $category->id);
-            }
-        }
         if(!empty($search)){
             $menu = $menu->where('name', 'like', '%'.$search.'%');
         }
+        if($screen_uuid == 1){
+            $screen_id=1;
+        } else {
+            $screen = $this->findByUuid($screen_uuid);
+            if(empty($screen) or ($screen->type != 'screen')){
+                $this->errors ="Wrong screen";
+                return false;
+            }
+            $screen_id = $screen->g5_id;
+        }
+
+        $menu = $menu->where('parent_id', $screen_id);
 
         return $menu->paginate($limit);
     }
 
-    public function new_menu($limit=10, $search="")
+    public function new_menu($screen_uuid=1, $limit=10, $search="")
     {
+        if($screen_uuid != 1){
+            $screen = $this->findByUuid($screen_uuid);
+            if(empty($screen) or ($screen->type != 'screen')){
+                $this->errors ="Wrong screen";
+                return false;
+            }
+            $screen_id = $screen->g5_id;
+        } else {
+            $screen_id = 1;
+        }
+
         $data = [
-            ['is_new', '=', 1]
+            ['is_new', '=', 1],
+            ['parent_id', '=', $screen_id]
         ];
         if(!empty($search)){
             $data[] = ['name', 'like', '%'.$search.'%'];
@@ -93,7 +117,13 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
             ['slug' => $identifier]
         ];
 
-        return $this->findByOrFirst($criteria);
+        $menu = $this->findByOrFirst($criteria);
+        if($menu->type != 'item'){
+            $this->errors = "Not an Item";
+            return false;
+        }
+
+        return $menu;
     }
 
     public function update_menu(string $uuid, Request $request)
@@ -123,7 +153,10 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
         } else {
             $data['menu_category_id'] = null;
         }
-        $data['is_new'] = 0;
+
+        if($menu->type == 'item'){
+            $data['is_new'] = 0;
+        }
 
         $menu = $this->update($menu->id, $data);
 

@@ -35,7 +35,7 @@ class UserMembership extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function membership(){
-        return $this->belongsTo(Product::class, 'membership_id', 'id');
-    }
+    // public function membership(){
+    //     return $this->belongsTo(Product::class, 'membership_id', 'id');
+    // }
 }

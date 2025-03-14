@@ -16,6 +16,8 @@ class FoodMenu extends Model
         'slug',
         'menu_category_id',
         'type',
+        'is_modifier',
+        'group_id',
         'name',
         'description',
         'amount',
@@ -64,6 +66,14 @@ class FoodMenu extends Model
         return $add_ons;
     }
 
+    public function modifiers(){
+        if(empty($this->modifier_id)){
+            return null;
+        }
+        $modifiers = $this->where('group_id', $this->modifier_id)->where('is_delivery_fee', 0)->orderBy('name', 'asc');
+        return $modifiers;
+    }
+
     public function user_add_ons(){
         if(empty($this->add_ons)){
             return null;
@@ -83,6 +93,15 @@ class FoodMenu extends Model
         $add_ons = $add_ons->isValid();
         $add_ons = $add_ons->orderBy('name', 'asc');
         return $add_ons;
+    }
+
+    public function user_modifiers(){
+        if(empty($this->modifier_id)){
+            return null;
+        }
+        $modifiers = $this->where('group_id', $this->modifier_id)->where('is_delivery_fee', 0)
+                        ->isValid()->orderBy('name', 'asc');
+        return $modifiers;
     }
 
     public function photos(){

@@ -25,7 +25,7 @@ class SendUserActivationMail implements ShouldQueue
     public function handle(UserRegistered $event): void
     {
         $user = $event->user;
-        if(!empty($user->email)){
+        if(!empty($user->email) and empty($user->parent_id)){
             $user->name = $user->firstname;
             Mail::to($user)->send(new AddUserNotificationMail($user->name, $user->verification_token, $user->email));
         }
