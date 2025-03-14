@@ -70,10 +70,22 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
         return $menu->paginate($limit);
     }
 
-    public function new_menu($limit=10, $search="")
+    public function new_menu($screen_uuid=1, $limit=10, $search="")
     {
+        if($screen_uuid != 1){
+            $screen = $this->findByUuid($screen_uuid);
+            if(empty($screen) or ($screen->type != 'screen')){
+                $this->errors ="Wrong screen";
+                return false;
+            }
+            $screen_id = $screen->g5_id;
+        } else {
+            $screen_id = 1;
+        }
+
         $data = [
-            ['is_new', '=', 1]
+            ['is_new', '=', 1],
+            ['parent_id', '=', $screen_id]
         ];
         if(!empty($search)){
             $data[] = ['name', 'like', '%'.$search.'%'];
@@ -141,7 +153,10 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
         } else {
             $data['menu_category_id'] = null;
         }
-        $data['is_new'] = 0;
+
+        if($menu->type == 'item'){
+            $data['is_new'] = 0;
+        }
 
         $menu = $this->update($menu->id, $data);
 

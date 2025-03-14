@@ -52,12 +52,15 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
 
                 $sortData = [
                     ['g5_id' => $customer['CustomerID']],
-                    ['email' => $customer['Email']],
+                    ['email' => $email],
                     ['phone' => $customer['Mobile']]
                 ];
 
                 $user = $this->findByOrFirst($sortData);
                 if($user){
+                    if(empty($user->g5_id)){
+                        $user->update(['g5_id' => $customer['CustomerID']]);
+                    }
                     $user->wallet()->update(['balance' => $customer['Debt'] < 0 ? abs($customer['Debt']) : -1 * abs($customer['Debt'])]);
                     continue;
                 }
@@ -88,10 +91,7 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
     }
 
     public function keep(array $data){
-        $user = $this->findByOrFirst([
-            ['email' => $data['email']],
-            ['phone' => $data['phone']]
-        ]);
+        $user = $this->findFirstBy(['email' => $data['email']]);
         if(empty($user)){
             $user = $this->store($data, 0);
         } else {
@@ -119,10 +119,8 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
                 'balance' => $balance
             ]);
         }
-
-        if($user->email == 'uzomad@mac.com'){
-            UserRegistered::dispatch($user);
-        }
+        
+        UserRegistered::dispatch($user);        
 
         return $user;
     }
@@ -258,6 +256,17 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
 
         $user->can_use = $request->status;
         $user->save();
+        if($user->can_use == 0){
+            if(empty($user->parent_id)){
+                $relations = $this->findBy(['parent_id' => $user->id]);
+                if(!empty($relations)){
+                    foreach($relations as $relation){
+                        $relation->can_use = 0;
+                        $relation->save();
+                    }
+                }
+            }
+        }
     }
 
     public function fetch_member_by_param($key, $value)

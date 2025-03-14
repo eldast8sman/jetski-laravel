@@ -10,7 +10,7 @@ interface FoodMenuRepositoryInterface extends AbstractRepositoryInterface
 
     public function user_index($screen_uuid=1, $limit=10, $search="");
 
-    public function new_menu($limit=10, $search="");
+    public function new_menu($screen_uuid=1,$limit=10, $search="");
 
     public function show(string $identifier);
 

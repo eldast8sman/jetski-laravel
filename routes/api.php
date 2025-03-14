@@ -98,8 +98,8 @@ Route::prefix('admin')->group(function(){
 
         Route::controller(FoodMenuController::class)->prefix('food-menu')->group(function(){
             Route::post('/', 'refresh_menu')->name('foodMenu.refresh');
-            Route::get('/', 'index')->name('foodMenu.index');
-            Route::get('/menu/new', 'new_menu')->name('foodMenu.newMenu');
+            Route::get('/screen/{screen_uuid}', 'index')->name('foodMenu.index');
+            Route::get('/menu/new/{screen_uuid}', 'new_menu')->name('foodMenu.newMenu');
             Route::get('/menu/add-ons', 'add_ons')->name('foodMenu.addOns.index');
             Route::get('/menu/delivery-fees', 'delivery_fees')->name('foodMenu.delivery_fees.index');
             Route::get('/{uuid}', 'show')->name('foodMenu.show');

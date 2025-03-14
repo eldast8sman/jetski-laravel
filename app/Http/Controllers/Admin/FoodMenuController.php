@@ -37,7 +37,7 @@ class FoodMenuController extends Controller
             ]);
 
             $menus = json_decode($menus, true);
-            
+
             $ref = Str::random(20).time();
             $this->menu->track_screen($ref, 1);
             foreach($menus as $menu){
@@ -61,10 +61,16 @@ class FoodMenuController extends Controller
         return $this->success_response('Food Menu fetched successfully', AllFoodMenuResource::collection($menus)->response()->getData(true));
     }
 
-    public function new_menu(Request $request){
+    public function new_menu(Request $request, $screen_uuid){
         $limit = $request->has('limit') ? (int)$request->limit : 9;
         $search = $request->has('search') ? $request->search : "";
-        $menus = $this->menu->new_menu($limit, $search);
+        $menus = $this->menu->new_menu($screen_uuid, $limit, $search);
+        if(!$menus){
+            return $this->failed_response($this->menu->errors);
+        }
+        if(empty($menus)){
+            return $this->failed_response("No New Food Menu for this Screen", 404);
+        }
         return $this->success_response("Food Menu fetched successfully", AllFoodMenuResource::collection($menus)->response()->getData(true));
     }
 

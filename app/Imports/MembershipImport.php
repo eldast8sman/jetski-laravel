@@ -15,7 +15,9 @@ class MembershipImport implements ToCollection, WithHeadingRow
     public function collection(Collection $collection)
     {
         foreach($collection as $row){
-            dispatch(new SaveMembershipJob($row));
+            if(!empty($row['first_name']) and !empty($row['last_name'])){
+                dispatch(new SaveMembershipJob($row));
+            }
         }
     }
 }
