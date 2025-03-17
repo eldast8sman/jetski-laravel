@@ -4,7 +4,7 @@ namespace App\Repositories\Interfaces;
 
 interface AbstractRepositoryInterface
 {
-    public function all();
+    public function all($orderBy=[], $limit=null, $count=false);
 
     public function find(int $id);
 

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\MembershipType;
 use App\Models\Product;
 use App\Models\User;
 use App\Repositories\MemberRepository;
@@ -34,10 +35,15 @@ class SaveMembershipJob implements ShouldQueue
     {
         $row = $this->row;
         $mem_type = $row['membership_type'];
+        $mems = [];
         if(!empty($mem_type)){
-            $membership = Product::where('category', 'Infrastructure')->where('name', $mem_type)->first();
-            if(!empty($membership)){
-                $membership_id = $membership->id;
+            $types = explode('/', $mem_type);
+            foreach($types as $type){
+                $type = trim($type);
+                $membership = MembershipType::where('name', $type)->first();
+                if(!empty($membership)){
+                    $mems[] = $membership->uuid;
+                }
             }
         }
         $data = [
@@ -53,6 +59,7 @@ class SaveMembershipJob implements ShouldQueue
             'photo' => "https://lagos-jetski-files.s3.us-east-2.amazonaws.com/ljs-placeholder.png",
             'dob' => Carbon::createFromFormat('Y-m-d', '1900-01-01')->addDays($row['birthday'] - 2)->toDateString(),
             'email' => $row['email_address'],
+            'membership_id' => !empty($mems) ? join(',', $mems) : null
         ];
         if(isset($row['parent_id']) and !empty($row['parent_id'])){
             $parent = User::where('membership_id', $row['parent_id'])->first();

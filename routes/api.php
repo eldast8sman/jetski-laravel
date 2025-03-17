@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\FoodMenuController;
 use App\Http\Controllers\Admin\JetskiEventController;
 use App\Http\Controllers\Admin\MembershipController;
+use App\Http\Controllers\Admin\MembershipTypeController;
 use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\OrderCartController as AdminOrderCartController;
@@ -84,6 +85,14 @@ Route::prefix('admin')->group(function(){
             Route::post('/{uuid}/membership', 'update_membership_information')->name('admin.members.membership.update');
             Route::post('/{uuid}/watercraft', 'update_watercraft_information')->name('admin.members.watercraft.update');
             Route::post('/{uuid}/employment', 'update_employment_information')->name('admin.members.employment.update');
+        });
+
+        Route::controller(MembershipTypeController::class)->prefix('membership-types')->group(function(){
+            Route::post('/default/add', 'store_default')->name('admin.membershipType.storeDefault');
+            Route::post('/', 'store')->name('admin.membershipType.store');
+            Route::get('/', 'index')->name('admin.membershipType.index');
+            Route::post('/{uuid}', 'update')->name('admin.membershipType.update');
+            Route::delete('/{uuid}', 'destroy')->name('admin.membershipType.delete');
         });
 
         Route::get('/transactions', [MembershipController::class, 'all_transactions'])->name('admin.members.store.bulk');

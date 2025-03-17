@@ -12,11 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('membership_id')->nullable()->change();
+            $table->text('membership_id')->change();
         });
-
         Schema::table('user_memberships', function (Blueprint $table) {
-            $table->string('membership_id')->nullable()->change();
+            $table->text('membership_id')->change();
         });
     }
 
@@ -26,10 +25,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('membership_id')->nullable()->change();
+            $table->string('membership_id')->change();
         });
         Schema::table('user_memberships', function (Blueprint $table) {
-            $table->string('membership_id')->nullable()->change();
+            $table->text('membership_id')->change();
         });
     }
 };
