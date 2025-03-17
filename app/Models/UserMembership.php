@@ -35,7 +35,16 @@ class UserMembership extends Model
         return $this->belongsTo(User::class);
     }
 
-    // public function membership(){
-    //     return $this->belongsTo(Product::class, 'membership_id', 'id');
-    // }
+    public function membership(){
+        $memberships = [];
+        if(!empty($this->membership_id)){
+            $mem_ids = explode(',', $this->membership_id);
+            foreach($mem_ids as $mem_id){
+                $type = MembershipType::where('uuid', $mem_id)->first(['uuid', 'slug', 'name']);
+                $memberships[] = $type;
+            }
+        }
+
+        return !empty($memberships) ? $memberships : null;
+    }
 }

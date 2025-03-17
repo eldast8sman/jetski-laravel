@@ -25,6 +25,7 @@ use App\Repositories\Interfaces\InviteRepositoryInterface;
 use App\Repositories\Interfaces\JetskiEventRepositoryInterface;
 use App\Repositories\Interfaces\MemberRepositoryInterface;
 use App\Repositories\Interfaces\MembershipInformationRepositoryInterface;
+use App\Repositories\Interfaces\MembershipTypeRepositoryInterface;
 use App\Repositories\Interfaces\MenuCategoryRepositoryInterface;
 use App\Repositories\Interfaces\MenuRepositoryInterface;
 use App\Repositories\Interfaces\NotificationRepositoryInterface;
@@ -40,6 +41,7 @@ use App\Repositories\InviteRepository;
 use App\Repositories\JetskiEventRepository;
 use App\Repositories\MemberRepository;
 use App\Repositories\MembershipInformationRepository;
+use App\Repositories\MembershipTypeRepository;
 use App\Repositories\MenuCategoryRepository;
 use App\Repositories\MenuRepository;
 use App\Repositories\NotificationRepository;
@@ -86,6 +88,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(OrderCartRepositoryInterface::class, OrderCartRepository::class);
         $this->app->bind(JetskiEventRepositoryInterface::class, JetskiEventRepository::class);
         $this->app->bind(EventBookingRepositoryInterface::class, EventBookingRepository::class);
+        $this->app->bind(MembershipTypeRepositoryInterface::class, MembershipTypeRepository::class);
     }
 
     /**
