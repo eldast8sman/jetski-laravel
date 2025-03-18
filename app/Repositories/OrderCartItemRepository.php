@@ -106,6 +106,15 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
         ];
     }
 
+    public function sort_modifier($modifier, FoodMenu $item){
+        $modifier = $this->menu->show($modifier);
+        if($modifier->group_id != $item->modifier_id){
+            return false;
+        }
+
+        return $modifier;
+    }
+
     private function check_availability(FoodMenu $item) : bool
     {
         $now = Carbon::now('Africa/Lagos');
