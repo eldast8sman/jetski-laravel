@@ -82,10 +82,6 @@ class User extends Authenticatable implements JWTSubject
         return $query->whereNull('parent_id')->orWhere('parent_id', 0)->orWhere('parent_id', '');
     }
 
-    public function membership(){
-        return $this->belongsTo(Product::class, 'membership_id', 'id');
-    }
-
     public function membership_information(){
         return $this->hasOne(UserMembership::class);
     }

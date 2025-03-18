@@ -20,6 +20,7 @@ class AllUserResource extends JsonResource
             'lastname' => $this->lastname,
             'phone' => $this->phone,
             'photo' => $this->photo,
+            'membership_id' => $this->membership_id,
             'membership' => $this->membership_information->membership() ?? null
         ];
     }

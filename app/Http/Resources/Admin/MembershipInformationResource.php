@@ -16,6 +16,7 @@ class MembershipInformationResource extends JsonResource
     {
         return [
             'membership' => $this->membership(),
+            'membership_id' => $this->membership_id,
             'amount' => $this->amount,
             'payment_date' => $this->payment_date,
             'date_joined' => $this->date_joined,
