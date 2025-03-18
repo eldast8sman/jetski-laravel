@@ -17,7 +17,7 @@ class UserObserver
         if(!empty($mems)){
             $membership_ids = explode(',', $mems);
             foreach($membership_ids as $membership_id){
-                $users = User::where('membership_id', 'like', '%'.$membership_id.'%')->count();
+                $users = User::where('membership_type_id', 'like', '%'.$membership_id.'%')->count();
                 $membership = MembershipType::where('uuid', $membership_id);
                 if(!empty($membership)){
                     $membership->update(['total_members' => $users]);

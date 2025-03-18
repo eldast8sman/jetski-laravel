@@ -26,7 +26,8 @@ class RelationResource extends JsonResource
             'gender' => $this->gender,
             'marital_status' => $this->marital_status,
             'address' => $this->address,
-            'status' => $this->status
+            'status' => $this->status,
+            'membsership' => $this->membership_information->membership() ?? null
         ];
     }
 }

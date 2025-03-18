@@ -29,6 +29,7 @@ class User extends Authenticatable implements JWTSubject
         'nationality',
         'religion',
         'membership_id',
+        'membership_type_id',
         'exp_date',
         'email_verified',
         'verification_token',

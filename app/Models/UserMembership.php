@@ -13,6 +13,7 @@ class UserMembership extends Model
         'user_id',
         'uuid',
         'membership_id',
+        'membership_type_id',
         'amount',
         'payment_date',
         'date_joined',
