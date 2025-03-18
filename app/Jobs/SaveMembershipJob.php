@@ -46,6 +46,7 @@ class SaveMembershipJob implements ShouldQueue
                 }
             }
         }
+
         $data = [
             'membership_id' => $row['id_number'],
             'firstname' => $row['first_name'],
@@ -67,9 +68,6 @@ class SaveMembershipJob implements ShouldQueue
                 $data['parent_id'] = $parent->id;
             }
         }
-        // if(isset($membership_id)){
-        //     $data['membership_id'] = $membership_id;
-        // }
 
         $user = $this->repo->keep($data);
         if($user){
