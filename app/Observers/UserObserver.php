@@ -13,7 +13,7 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        $mems = $user->membership_id;
+        $mems = $user->membership_type_id;
         if(!empty($mems)){
             $membership_ids = explode(',', $mems);
             foreach($membership_ids as $membership_id){
@@ -31,11 +31,11 @@ class UserObserver
      */
     public function updated(User $user): void
     {
-        $mems = $user->membership_id;
+        $mems = $user->membership_type_id;
         if(!empty($mems)){
             $membership_ids = explode(',', $mems);
             foreach($membership_ids as $membership_id){
-                $users = User::where('membership_id', 'like', '%'.$membership_id.'%')->count();
+                $users = User::where('membership_type_id', 'like', '%'.$membership_id.'%')->count();
                 $membership = MembershipType::where('uuid', $membership_id);
                 if(!empty($membership)){
                     $membership->update(['total_members' => $users]);
@@ -45,7 +45,7 @@ class UserObserver
 
         $mem_info = UserMembership::where('user_id', $user->id)->first();
         if(!empty($mem_info)){
-            $mem_info->membership_id = $mems;
+            $mem_info->membership_type_id = $mems;
             $mem_info->save();
         }
     }
@@ -55,11 +55,11 @@ class UserObserver
      */
     public function deleted(User $user): void
     {
-        $mems = $user->membership_id;
+        $mems = $user->membership_type_id;
         if(!empty($mems)){
             $membership_ids = explode(',', $mems);
             foreach($membership_ids as $membership_id){
-                $users = User::where('membership_id', 'like', '%'.$membership_id.'%')->count();
+                $users = User::where('membership_type_id', 'like', '%'.$membership_id.'%')->count();
                 $membership = MembershipType::where('uuid', $membership_id);
                 if(!empty($membership)){
                     $membership->update(['total_members' => $users]);

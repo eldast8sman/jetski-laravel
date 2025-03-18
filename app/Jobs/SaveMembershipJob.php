@@ -59,7 +59,7 @@ class SaveMembershipJob implements ShouldQueue
             'photo' => "https://lagos-jetski-files.s3.us-east-2.amazonaws.com/ljs-placeholder.png",
             'dob' => Carbon::createFromFormat('Y-m-d', '1900-01-01')->addDays($row['birthday'] - 2)->toDateString(),
             'email' => $row['email_address'],
-            'membership_id' => !empty($mems) ? join(',', $mems) : null
+            'membership_type_id' => !empty($mems) ? join(',', $mems) : null
         ];
         if(isset($row['parent_id']) and !empty($row['parent_id'])){
             $parent = User::where('membership_id', $row['parent_id'])->first();

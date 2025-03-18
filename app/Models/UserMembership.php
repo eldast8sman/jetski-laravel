@@ -37,8 +37,8 @@ class UserMembership extends Model
 
     public function membership(){
         $memberships = [];
-        if(!empty($this->membership_id)){
-            $mem_ids = explode(',', $this->membership_id);
+        if(!empty($this->membership_type_id)){
+            $mem_ids = explode(',', $this->membership_type_id);
             foreach($mem_ids as $mem_id){
                 $type = MembershipType::where('uuid', $mem_id)->first(['uuid', 'slug', 'name']);
                 $memberships[] = $type;
