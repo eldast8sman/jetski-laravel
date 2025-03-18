@@ -120,7 +120,9 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
             ]);
         }
         
-        UserRegistered::dispatch($user);        
+        if(empty($user->parent_id)){
+            UserRegistered::dispatch($user);   
+        }        
 
         return $user;
     }
