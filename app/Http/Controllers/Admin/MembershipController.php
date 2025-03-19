@@ -80,13 +80,17 @@ class MembershipController extends Controller
     public function store_bulk(ExcelUploadRequest $request){
         try {
             $file = $request->file('file');
-            $path = $file->getRealPath();
-
-            Excel::import(new MembershipImport, $path);
-
+        
+            // Generate a proper local storage path with an extension
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('temp', $fileName, 'local');
+        
+            // Pass the full absolute path to Excel::import
+            Excel::import(new MembershipImport, storage_path('app/' . $path));
+        
             return $this->success_response("File Processing in progress");
         } catch(Exception $e){
-            Log::error('Excel Error '. $e->getMessage());
+            Log::error('Excel Error: ' . $e->getMessage());
             return $this->failed_response('Excel File Processing Failed', 500);
         }
     }
