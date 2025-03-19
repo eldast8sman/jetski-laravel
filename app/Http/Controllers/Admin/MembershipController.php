@@ -80,7 +80,8 @@ class MembershipController extends Controller
     public function store_bulk(ExcelUploadRequest $request){
         try {
             $file = $request->file('file');
-            $path = $file->store('temp');
+            $path = $file->getRealPath();
+            // $path = $file->store('temp');
 
             return $path;
 
