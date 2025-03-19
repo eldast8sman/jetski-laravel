@@ -81,9 +81,6 @@ class MembershipController extends Controller
         try {
             $file = $request->file('file');
             $path = $file->getRealPath();
-            // $path = $file->store('temp');
-
-            return $path;
 
             Excel::import(new MembershipImport, $path);
 
