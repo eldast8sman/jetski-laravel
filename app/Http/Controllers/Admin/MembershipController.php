@@ -82,6 +82,8 @@ class MembershipController extends Controller
             $file = $request->file('file');
             $path = $file->store('temp');
 
+            return $path;
+
             Excel::import(new MembershipImport, $path);
 
             return $this->success_response("File Processing in progress");
