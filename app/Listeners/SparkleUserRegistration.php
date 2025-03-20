@@ -37,9 +37,13 @@ class SparkleUserRegistration implements ShouldQueue
                     "external_reference" =>  $reference,
                     "email" => $user->email,
                     "bank_verification_number" => "01234567891",
-                    "is_permanent" => 1,
+                    "is_permanent" => (env('APP_ENV') == 'production') ? 1 : 0,
                     "is_active" => 1
                   ];
+
+                if(env('APP_ENV') != 'production'){
+                    $payload['expires_at'] = '2027-12-31 23:59:58';
+                }
 
                 $account = $service->createAccount($payload);
                 if($account){
