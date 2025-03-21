@@ -70,9 +70,23 @@ class SparkleService
         return $this->responseHandler($response);
     }
 
-    public function getTransactionsPeriodically($start_date, $end_date)
+    public function getTransactions($start_date="", $end_date="")
     {
-        $url = $this->base_url = "/transactions?";
+        $url = $this->base_url."/transactions";
+        $params = [];
+        if(!empty($start_date)){
+            $params['start_date'] = $start_date;
+        }
+        if(!empty($end_date)){
+            $params['end_date'] = $end_date;
+        }
+        
+        if(!empty($params)){
+            $url = $url.'?'.http_build_query($params);
+        }
+
+        $transactions = Http::withToken($this->token)->get($url);
+        return $this->responseHandler($transactions);
     }
 
     public function responseHandler(Response $response){

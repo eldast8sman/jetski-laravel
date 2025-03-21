@@ -14,6 +14,7 @@ class OrderCartItem extends Model
         'add_ons',
         'modifier',
         'add_on_price',
+        'modifier_price',
         'unit_price',
         'total_unit_price',
         'quantity',

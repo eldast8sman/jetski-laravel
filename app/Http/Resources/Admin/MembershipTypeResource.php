@@ -14,6 +14,11 @@ class MembershipTypeResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'uuid' => $this->uuid,
+            'name' => $this->name,
+            'description' => $this->description,
+            'total_members' => $this->total_members
+        ];
     }
 }

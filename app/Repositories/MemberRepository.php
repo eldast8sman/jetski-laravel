@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Events\UserRegistered;
+use App\Jobs\BulkJobHandler;
 use App\Mail\AddUserNotificationMail;
 use App\Models\Product;
 use App\Models\User;
@@ -35,53 +36,7 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
 
             $customers = json_decode($service->getCustomers([]), true);
 
-            foreach($customers as $customer){
-                if(empty($customer['Phone'])){
-                    $customer['Phone'] = null;
-                }
-                if(empty($customer['Email'])){
-                    continue;
-                }
-                if(empty($customer['Mobile'])){
-                    $customer['Mobile'] = null;
-                }
-
-                $email_array = explode(',', $customer['Email']);
-                $email = trim(strval(array_shift($email_array)));
-                $other_emails = !empty($email_array) ? trim(strval(join(',', $email_array))) : '';
-
-                $sortData = [
-                    ['g5_id' => $customer['CustomerID']],
-                    ['email' => $email],
-                    ['phone' => $customer['Mobile']]
-                ];
-
-                $user = $this->findByOrFirst($sortData);
-                if($user){
-                    if(empty($user->g5_id)){
-                        $user->update(['g5_id' => $customer['CustomerID']]);
-                    }
-                    $user->wallet()->update(['balance' => $customer['Debt'] < 0 ? abs($customer['Debt']) : -1 * abs($customer['Debt'])]);
-                    continue;
-                }
-
-                $balance = $customer['Debt'] < 0 ? abs($customer['Debt']) : -1 * abs($customer['Debt']);
-                $user = $this->store([
-                    'g5_id' => $customer['CustomerID'],
-                    'firstname' => $customer['CustomerName'],
-                    'lastname' => $customer['FamilyName'],
-                    'phone' => $customer['Mobile'] != '' ? $customer['Mobile'] : $customer['Phone'],
-                    'gender' => ucfirst($customer['Sex']),
-                    'marital_status' => ($customer['MartialStatus']) ? ucfirst($customer['MartialStatus']) : 'Single',
-                    'address' => $customer['Street'] . ' ' .  $customer['City'] . ' ' . $customer['State'],
-                    'photo' => "https://avatars.dicebear.com/api/initials/" . $customer['CustomerName'] . ".svg",
-                    'dob' => Carbon::parse($customer['BirthDay'])->format('Y-m-d'),
-                    'email' => $email,
-                    'other_emails' => $other_emails,
-                    'membership_id' => !empty($product = Product::where('name', 'JetSki')->first()) ? $product->id : null
-                ], $balance);
-                
-            }
+            dispatch(new BulkJobHandler('g5_members', $customers));
 
             return true;
         } catch(Exception $e){
