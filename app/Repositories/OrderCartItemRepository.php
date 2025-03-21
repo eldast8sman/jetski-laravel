@@ -44,6 +44,14 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
                 $add_on_price = $sorted['total_price'];
             }
             
+            $modifier_price = 0;
+            if(!empty($data['modifier'])){
+                $modifier = $this->sort_modifier($data['modifier'], $item);
+                if($modifier){
+                    $modifier_price = $modifier->amount;
+                }
+            }
+
             $total_unit_price = $item->amount + $add_on_price;
             $total_price = $total_unit_price * $data['quantity'];
             $data = [

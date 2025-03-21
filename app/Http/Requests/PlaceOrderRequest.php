@@ -34,7 +34,7 @@ class PlaceOrderRequest extends FormRequest
             'items.*.add_ons' => 'nullable|array',
             'items.*.add_ons.*.id' => 'required|string|exists:food_menus,slug',
             'items.*.add_ons.*.quantity' => 'required|integer|min:1',
-            'items.*.modifier' => 'string|exists:food_menus,slug'
+            'items.*.modifier' => 'string|exists:food_menus,slug|nullable'
         ];
     }
 }
