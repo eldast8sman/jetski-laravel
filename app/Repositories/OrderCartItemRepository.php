@@ -45,14 +45,16 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
             }
             
             $modifier_price = 0;
+            $modifier_id = null;
             if(!empty($data['modifier'])){
                 $modifier = $this->sort_modifier($data['modifier'], $item);
                 if($modifier){
                     $modifier_price = $modifier->amount;
+                    $modifier_id = $modifier->id;
                 }
             }
 
-            $total_unit_price = $item->amount + $add_on_price;
+            $total_unit_price = $item->amount + $add_on_price + $modifier_price;
             $total_price = $total_unit_price * $data['quantity'];
             $data = [
                 'uuid' => Str::uuid().'-'.time(),
@@ -60,6 +62,8 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
                 'food_menu_id' => $item->id,
                 'add_ons' => $add_ons,
                 'add_on_price' => $add_on_price,
+                'modifier_id' => $modifier_id,
+                'modifier_price' => $modifier_price,
                 'unit_price' => $item->amount,
                 'total_unit_price' => $total_unit_price,
                 'quantity' => $data['quantity'],
