@@ -96,7 +96,7 @@ class AuthController extends Controller
             return $this->failed_response("Photo Upload Failed");
         }
 
-        return $this->success_response('Profile Photo Updated successfully', new ProfileResource($user));
+        return $this->success_response('Profile Photo Updated successfully', new UserResource($user));
     }
 
     public function update(ProfileUpdateRequest $request){
@@ -107,7 +107,7 @@ class AuthController extends Controller
             return $this->failed_response($this->user->error_msg);
         }
 
-        return $this->success_response("Profile Update successful", new ProfileResource($user));
+        return $this->success_response("Profile Update successful", new UserResource($user));
     }
 
     public function change_password(ChangePasswordRequest $request){

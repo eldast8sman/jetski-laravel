@@ -48,24 +48,23 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
         return $menus;
     }
 
-    public function user_index($screen_uuid=1, $limit = 10, $search = "")
+    public function user_index($screen_slug=1, $limit = 10, $search = "")
     {
-        $menu = FoodMenu::isValid();
-        if(!empty($search)){
-            $menu = $menu->where('name', 'like', '%'.$search.'%');
-        }
-        if($screen_uuid == 1){
-            $screen_id=1;
-        } else {
-            $screen = $this->findByUuid($screen_uuid);
+        if($screen_slug != 1){
+            $screen = $this->findFirstBy(['slug' => $screen_slug]);
             if(empty($screen) or ($screen->type != 'screen')){
-                $this->errors ="Wrong screen";
+                $this->errors = "Wrong Screen";
                 return false;
             }
             $screen_id = $screen->g5_id;
+        } else {
+            $screen_id = 1;
         }
 
-        $menu = $menu->where('parent_id', $screen_id);
+        $menu = FoodMenu::isValid()->where('is_stand_alone', 1)->where('parent_id', $screen_id);
+        if(!empty($search)){
+            $menu = $menu->where('name', 'like', '%'.$search.'%');
+        }
 
         return $menu->paginate($limit);
     }
