@@ -233,8 +233,7 @@ Route::prefix('user')->group(function(){
         });
 
         Route::controller(ControllersFoodMenuController::class)->prefix('food-menu')->group(function(){
-            Route::get('/categories/all', 'categories')->name('foodMenu.categories.all');
-            Route::get('/', 'index')->name('foodMenu.index');
+            Route::get('/screen/{slug}', 'index')->name('foodMenu.index');
             Route::get('/{slug}', 'show')->name('foodMenu.show');
         });
 

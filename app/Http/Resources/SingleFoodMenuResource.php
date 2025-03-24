@@ -25,9 +25,9 @@ class SingleFoodMenuResource extends JsonResource
             'shelf_life_to' => $this->shelf_life_to,
             'ingredients' => $this->ingredients,
             'details' => $this->details,
-            'add_ons' => ($this->user_add_ons()->count() > 0) ? MenuAddOnResource::collection($this->user_add_ons()->get()) : null,
-            'add_ons' => (($this->user_modifiers !== null) and ($this->user_modifiers()->count() > 0)) ? MenuAddOnResource::collection($this->user_modifiers()->get()) : null,
-            'photos' => MenuPhotoResource::collection($this->photos)
+            'add_ons' => ($this->user_add_ons() != null) ? (($this->user_add_ons()->count() > 0) ? MenuAddOnResource::collection($this->user_add_ons()->get()) : null) : null,
+            'modifiers' => (($this->user_modifiers() !== null) and ($this->user_modifiers()->count() > 0)) ? MenuAddOnResource::collection($this->user_modifiers()->get()) : null,
+            'photos' => MenuPhotoResource::collection($this->photos) ?? null
         ];
     }
 }

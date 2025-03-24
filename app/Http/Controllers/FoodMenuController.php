@@ -20,16 +20,11 @@ class FoodMenuController extends Controller
         $this->category = $category;
     }
 
-    public function categories(){
-        return $this->success_response('Menu Categories fetched successfully', MenuCategoryResource::collection($this->category->index()));
-    }
-
-    public function index(Request $request){
+    public function index(Request $request, $slug=1){
         $limit = $request->has('limit') ? (int)$request->limit : 9;
-        $category_id = $request->has('category') ? (string)$request->category : null;
         $search = $request->has('search') ? (string)$request->search: "";
 
-        $menus = $this->menu->user_index($limit, $category_id, $search);
+        $menus = $this->menu->user_index($slug, $limit, $search);
         if(!$menus){
             return $this->failed_response($this->menu->errors, 500);
         }
