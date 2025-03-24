@@ -12,7 +12,7 @@ class OrderCartItem extends Model
         'order_cart_id',
         'food_menu_id',
         'add_ons',
-        'modifier',
+        'modifier_id',
         'add_on_price',
         'modifier_price',
         'unit_price',
@@ -38,6 +38,23 @@ class OrderCartItem extends Model
 
     public function modifer(){
         return FoodMenu::find($this->modifier_id);
+    }
+
+    public function sort_modifier($type="user"){
+        if(empty($this->modifier_id)){
+            return null;
+        }
+
+        $modifier = FoodMenu::find($this->modifier_id);
+        $photo = $modifier->photos()->first()->file_manager()->first(['url']) ?? null;
+        if(!empty($modifier)){
+            return [
+                'identiifier' => ($type == "user") ? $modifier->slug : $modifier->uuid,
+                'name' => $modifier->name,
+                'photo' => $photo,
+                'amount' => $modifier->amount
+            ];
+        }
     }
 
     public function sorted_add_ons($type='user')

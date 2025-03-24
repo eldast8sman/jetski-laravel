@@ -218,6 +218,25 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
                     ];
                 }
             }
+            if($item->modifier_price > 0){
+                $modifier = $this->menu->find($item->modifier_id);
+                $sel_items[] = [
+                    'ItemID' => intval($modifier->g5_id),
+                    'Quantity' => 1,
+                    'UsedPrice' => $item->modifier_price,
+                    'CustomerNumber' => intval($user->g5_id),
+                    'AffectedItem' => 0,
+                    'VoidReasonID' => 0,
+                    'Status' => 'selected',
+                    'OrderbyEmployeeId' => intval($employee_code),
+                    'PriceModeID' => 1,
+                    'OrderingTime' => Carbon::now('Africa/Lagos')->format('Y-m-d'),
+                    'ItemDescription' => $modifier->name,
+                    'ItemRemark' => '',
+                    'inctax' => 0,
+                    'SetMenu' => false
+                ];
+            }
         }
         if(!empty($order->delivery_fee_id)){
             $fee = FoodMenu::find($order->delivery_fee_id);
@@ -322,16 +341,6 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         $user = User::where('uuid', $request->user_id)->first();
 
         $order = $this->place_order($all, $user);
-
-        // if(!$this->g5_place($order)){
-        //     return false;
-        //     $order->delete();
-        // }
-
-        // $order->status = "Processing";
-        // $order->save();
-
-        // $this->track_order($order, 'Processing', 'admin', $admin->id);
 
         return $order;
     }

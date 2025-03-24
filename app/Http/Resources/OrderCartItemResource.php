@@ -24,6 +24,7 @@ class OrderCartItemResource extends JsonResource
                 'photo' => $photo
             ],
             'add_ons' => $this->sorted_add_ons(),
+            'modifier' => $this->sort_modifier(),
             'add_on_price' => $this->add_on_price,
             'unit_price' => $this->unit_price,
             'total_unit_price' => $this->total_unit_price,
