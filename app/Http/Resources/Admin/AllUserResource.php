@@ -21,7 +21,7 @@ class AllUserResource extends JsonResource
             'phone' => $this->phone,
             'photo' => $this->photo,
             'membership_id' => $this->membership_id,
-            'membership' => $this->membership_information->membership() ?? null
+            'membership' => !empty($this->membership) ? (!empty($this->membership_information->membership()) ? $this->membership->membership() : null) : null
         ];
     }
 }
