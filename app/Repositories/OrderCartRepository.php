@@ -130,7 +130,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         }
 
         if($order->status != 'Pending'){
-            $this->errors = "You can Modify a Pending Order";
+            $this->errors = "You can only Modify a Pending Order";
             return false;
         }
 
@@ -142,8 +142,30 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
             $order->save();
         }
 
-        if(!$this->g5_place($order)){
-            return false;
+        if(env('APP_ENV') == 'production'){
+            if(!$this->g5_place($order)){
+                return false;
+            }
+        } else {
+            $order->g5_id = 'TEST'.$order->id;
+            $order->g5_order_number = 'TEST'.$order->id;
+            $order->save();
+            
+            $wallet = $order->user->wallet;
+            $wallet->balance -= $order->total_amount;
+            $wallet->save();
+
+            WalletTransaction::create([
+                'wallet_id' => $wallet->id,
+                'amount' => $order->total_amount,
+                'type' => 'Debit',
+                'uuid' => Str::uuid().'-'.time(),
+                'is_user_credited' => false,
+                'reason' => 'Order',
+                'reason_id' => $order->id,
+                'payment_processor' => 'G5 POS',
+                'external_reference' => $order->g5_id
+            ]);
         }
 
         $order = $this->change_status($order->uuid, "Processing");
