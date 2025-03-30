@@ -438,6 +438,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         }
 
         $order->status = $status;
+        $order->open = ($order->status == 'Pending') ? 1 : 0;
         $order->save();
 
         parent::__construct(new OrderTracker());

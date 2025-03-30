@@ -24,7 +24,8 @@ class RelativesResource extends JsonResource
             'marital_status' => ucfirst($this->marital_status),
             'dob' => $this->dob,
             'address' => $this->address,
-            'status' => $this->status
+            'status' => $this->status,
+            'user_activated' => !empty($this->password) ? true : false
         ];
     }
 }
