@@ -67,7 +67,8 @@ class OrderCartItemRepository extends AbstractRepository implements OrderCartIte
                 'unit_price' => $item->amount,
                 'total_unit_price' => $total_unit_price,
                 'quantity' => $data['quantity'],
-                'total_price' => $total_price
+                'total_price' => $total_price,
+                'order_cart_id' => !empty($data['order_cart_id']) ? $data['order_cart_id'] : null,
             ];
             
             $cart_item = $this->create($data);
