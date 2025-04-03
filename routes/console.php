@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\MembershipController;
+use App\Http\Controllers\SparkleController;
 use App\Models\Product;
 use App\Models\User;
 use App\Repositories\MemberRepository;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Schedule;
 //     $repo->fetch_g5_customers();
 // })->twiceDaily();
 
-// Schedule::call(function(){
-//     $repo = new MenuRepository(new Product());
-//     $repo->fetch_g5_menu();
-// })->twiceDaily();
+Schedule::call(function(){
+    $sparkle = new SparkleController(new \App\Services\SparkleService());
+    $sparkle->fetch_transactions();
+})->everySixHours();

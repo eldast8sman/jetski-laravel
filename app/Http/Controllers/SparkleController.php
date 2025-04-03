@@ -54,4 +54,12 @@ class SparkleController extends Controller
 
         return $this->success_response("Transactions Update in Progress");
     }
+
+    public function customers(){
+        $customers = $this->sparkle->getCustomers();
+        if(empty($customers)){
+            return $this->failed_response("No Customers yet");
+        }
+        return $this->success_response("Customers fetched successfully", $customers);
+    }
 }

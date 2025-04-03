@@ -301,6 +301,7 @@ Route::prefix('user')->group(function(){
 
 Route::get('/sparkle/webhook', [SparkleController::class, 'webhook']);
 Route::get('/sparkle/transactions', [SparkleController::class, 'fetch_transactions']);
+Route::get('/sparkle/customers', [SparkleController::class, 'customers']);
 Route::get('/g5-login', [G5PosService::class, 'login']);
 Route::get('/g5-members', [MembershipController::class, 'store_g5_members']);
 Route::get('/g5-menu', [MenuController::class, 'store_g5_menu']);

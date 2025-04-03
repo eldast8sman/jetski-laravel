@@ -370,7 +370,8 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
     public function index($limit = 10, $search = "")
     {
         $criteria = [
-            ['status', '!=', 'Completed']
+            ['status', '!=', 'Completed'],
+            ['status', '!=', 'Cancelled'],
         ];
         if(!empty($search)){
             $criteria[] = ['order_number', 'like', '%'.$search.'%'];
@@ -385,17 +386,14 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
 
     public function completed_orders($limit = 10, $search = "")
     {
-        $criteria = [
-            ['status', '=', 'Completed']
-        ];
+        $orders = OrderCart::where(function($query){
+            $query->where('status', 'Completed')
+                ->orWhere('status', 'Cancelled');
+        });
         if(!empty($search)){
-            $criteria[] = ['order_number', 'like', '%'.$search.'%'];
+            $orders->where('order_number', 'like', '%'.$search.'%');
         }
-        $orderBy = [
-            ['created_at', 'desc']
-        ];
-
-        $orders = $this->findBy($criteria, $orderBy, $limit);
+        $orders = $orders->orderBy('created_at', 'desc')->paginate($limit);
         return $orders;
     }
 
@@ -403,7 +401,8 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
     {
         $criteria = [
             ['user_id', '=', auth('user-api')->user()->id],
-            ['status', '!=', 'Completed']
+            ['status', '!=', 'Completed'],
+            ['status', '!=', 'Cancelled'],
         ];
         $orderBy = [
             ['created_at', 'asc']
@@ -414,14 +413,12 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
 
     public function user_completed_orders($limit = 10)
     {
-        $criteria = [
-            ['user_id', '=', auth('user-api')->user()->id],
-            ['status', '=', 'Completed']
-        ];
-        $orderBy = [
-            ['created_at', 'desc']
-        ];
-        $orders = $this->findBy($criteria, $orderBy, $limit);
+        $orders = OrderCart::where('user_id', auth('user-api')->user()->id)
+            ->where(function($query){
+                $query->where('status', 'Completed')
+                    ->orWhere('status', 'Cancelled');
+            });
+        $orders = $orders->orderBy('created_at', 'desc')->paginate($limit);
         return $orders;
     }
 
