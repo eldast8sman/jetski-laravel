@@ -15,7 +15,7 @@ class OrderCartItemResource extends JsonResource
     public function toArray(Request $request): array
     {
         $menu = $this->food_menu;
-        $photo = $menu->photos()->first()->file_manager()->first(['url'])->url ?? null;
+        $photo = ($menu->photos()->count() > 0) ? ($menu->photos()->first()->file_manager()->first(['url'])->url ?? null) : null;
         return [
             'uuid' => $this->uuid,
             'food_menu' => [

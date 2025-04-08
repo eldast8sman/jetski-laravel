@@ -43,6 +43,7 @@ class JetskiEvent extends Model
                 'name' => $pricing->name,
                 'description' => $pricing->description,
                 'price' => $pricing->price,
+                'audience' => $ticket['audience'],
                 'total_quantity' => $ticket['total_quantity'],
                 'available_quantity' => $ticket['available_quantity']
             ];
