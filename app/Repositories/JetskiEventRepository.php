@@ -48,6 +48,7 @@ class JetskiEventRepository extends AbstractRepository implements JetskiEventRep
             $ticket = EventTicketPricing::where('uuid', $pricing['uuid'])->first();
             if(!empty($ticket)){
                 $tickets[] = [
+                    'audience' =>  $pricing['audience'],
                     'id' => $ticket->id,
                     'total_quantity' => $pricing['total_quantity'],
                     'available_quantity' => $pricing['available_quantity']
