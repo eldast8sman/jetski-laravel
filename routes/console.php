@@ -18,4 +18,4 @@ use Illuminate\Support\Facades\Schedule;
 Schedule::call(function(){
     $sparkle = new SparkleController(new \App\Services\SparkleService());
     $sparkle->fetch_transactions();
-})->everySixHours();
+})->everyMinute();
