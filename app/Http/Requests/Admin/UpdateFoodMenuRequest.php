@@ -32,7 +32,7 @@ class UpdateFoodMenuRequest extends FormRequest
             'add_ons' => 'array|nullable',
             'add_ons.*' => 'string|exists:food_menus,uuid',
             'photos' => 'array|nullable',
-            'photos.*' => 'file|mimes:png,jpg,jpeg|max:500',
+            'photos.*' => 'file|mimes:png,jpg,jpeg|max:2500',
             'is_stand_alone' => 'required|boolean',
             'is_add_on' => 'required|boolean'
         ];
