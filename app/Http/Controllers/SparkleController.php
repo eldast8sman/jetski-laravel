@@ -8,6 +8,7 @@ use App\Models\TransactionTracker;
 use App\Services\SparkleService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SparkleController extends Controller
 {  
@@ -24,35 +25,36 @@ class SparkleController extends Controller
     }
 
     public function fetch_transactions(){
-        $tracker = TransactionTracker::orderBy('id', 'desc')->first();
-        $start_date = "";
-        $end_date = "";
-        if(!empty($tracker)){
-            $start_date = $tracker->last_sync;
-            $end_date = Carbon::now('Africa/Lagos')->format('Y-m-d');
-        }
-        $transactions = $this->sparkle->getTransactions($start_date, $end_date);
-        if(empty($transactions)){
-            return $this->failed_response("No Pending Transaction yet");
-        }
+        // $tracker = TransactionTracker::orderBy('id', 'desc')->first();
+        // $start_date = "";
+        // $end_date = "";
+        // if(!empty($tracker)){
+        //     $start_date = $tracker->last_sync;
+        //     $end_date = Carbon::now('Africa/Lagos')->format('Y-m-d');
+        // }
+        // $transactions = $this->sparkle->getTransactions($start_date, $end_date);
+        // if(empty($transactions)){
+        //     return $this->failed_response("No Pending Transaction yet");
+        // }
         
-        foreach($transactions['data'] as $transaction){
-            if($transaction['type'] != 'Credit'){
-                continue;
-            }
-            dispatch(new  SaveSparkleTransactionJob($transaction));
-        }
+        // foreach($transactions['data'] as $transaction){
+        //     if($transaction['type'] != 'Credit'){
+        //         continue;
+        //     }
+        //     dispatch(new  SaveSparkleTransactionJob($transaction));
+        // }
 
-        if(empty($tracker)){
-            TransactionTracker::create([
-                'last_sync' => Carbon::now('Africa/Lagos')->format('Y-m-d')
-            ]);
-        } else {
-            $tracker->last_sync = Carbon::now('Africa/Lagos')->format('Y-m-d');
-            $tracker->save();
-        }
+        // if(empty($tracker)){
+        //     TransactionTracker::create([
+        //         'last_sync' => Carbon::now('Africa/Lagos')->format('Y-m-d')
+        //     ]);
+        // } else {
+        //     $tracker->last_sync = Carbon::now('Africa/Lagos')->format('Y-m-d');
+        //     $tracker->save();
+        // }
 
-        return $this->success_response("Transactions Update in Progress");
+        // return $this->success_response("Transactions Update in Progress");
+        Log::info("Fetching transactions");
     }
 
     public function customers(){
