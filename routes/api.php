@@ -38,7 +38,6 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('admin')->group(function(){
     Route::controller(AuthController::class)->group(function(){
         Route::post('/first-admin', 'store')->name('admin.firstStore');
-        Route::get('/find-by-verification-token/{token}', 'fetch_by_verification_token')->name('admin.findByVerificationToken');
         Route::post('/activate-account', 'activate_account')->name('admin.activate_account');
         Route::post('/forgot-password', 'forgot_password')->name('admin.forgot_password');
         Route::post('/reset-password', 'reset_password')->name('admin.resetPassword');
@@ -121,21 +120,6 @@ Route::prefix('admin')->group(function(){
             Route::post('/{uuid}/confirm', 'confirm_order')->name('admin.orderCart.confirm');
             Route::post('/{uuid}', 'modify_order')->name('admin.orderCart.modify');
             Route::put('/{uuid}/status', 'change_status')->name('admin.orderCart.changeStatus');
-        });
-
-        Route::prefix('orders')->group(function(){
-            Route::controller(MenuController::class)->prefix('menu')->group(function(){
-                Route::get('/', 'index')->name('admin.menu.index');
-                Route::get('/{id}', 'show')->name('admin.menu.show');
-                Route::get('/search', 'search')->name('admin.menu.search');
-                Route::get('/{id}/modifiers', 'modifiers')->name('admin.menu.modifiers');
-            });
-            Route::controller(AdminOrderController::class)->group(function(){
-                Route::get('/', 'index')->name('admin.orders.index');
-                Route::get('/past', 'past_orders')->name('admin.orders.past');
-                Route::get('/search', 'search')->name('admin.orders.search');
-                Route::post('/', 'store')->name('admin.orders.store');
-            });
         });
 
         Route::prefix('bookings')->controller(AdminBookingController::class)->group(function(){
