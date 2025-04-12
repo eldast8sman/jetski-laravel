@@ -3,6 +3,8 @@
 namespace App\Imports;
 
 use App\Jobs\SaveMembershipJob;
+use App\Models\User;
+use App\Repositories\MemberRepository;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -19,5 +21,7 @@ class MembershipImport implements ToCollection, WithHeadingRow
                 dispatch(new SaveMembershipJob($row));
             }
         }
+        $repo = new MemberRepository(new User());
+        $repo->fetch_g5_customers();
     }
 }
