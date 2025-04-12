@@ -6,6 +6,7 @@ use App\Mail\CreditNotificationMail;
 use App\Models\SparkleWebhook;
 use App\Models\User;
 use App\Models\WalletTransaction;
+use Carbon\Carbon;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -76,6 +77,8 @@ class SparkleService
         $params = [];
         if(!empty($start_date)){
             $params['start_date'] = $start_date;
+        } elseif(env('APP_ENV') == 'production'){
+            $params['start_date'] = Carbon::now('Africa/Lagos')->format('Y-m-d');
         }
         if(!empty($end_date)){
             $params['end_date'] = $end_date;
