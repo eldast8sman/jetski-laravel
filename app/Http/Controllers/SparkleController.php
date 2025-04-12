@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SaveSparkleTransactionJob;
 use App\Jobs\SparkleWebhookJob;
+use App\Jobs\UpdateWalletTransactionsJob;
 use App\Models\TransactionTracker;
+use App\Models\WalletTransaction;
 use App\Services\SparkleService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SparkleController extends Controller
 {  
@@ -23,7 +26,19 @@ class SparkleController extends Controller
         return $this->success_response("Webhook received");
     }
 
+    public function update_uncredited(){
+        $transactions = WalletTransaction::where('type', 'Credit')->where('is_user_credited', false);
+        if($transactions->count() < 1){
+            return;
+        }
+
+        foreach($transactions->get() as $transaction){
+            dispatch(new UpdateWalletTransactionsJob($transaction));
+        }
+    }
+
     public function fetch_transactions(){
+        $this->update_uncredited();
         $tracker = TransactionTracker::orderBy('id', 'desc')->first();
         $start_date = "";
         $end_date = "";
@@ -53,6 +68,7 @@ class SparkleController extends Controller
         }
 
         return $this->success_response("Transactions Update in Progress");
+    
     }
 
     public function customers(){
