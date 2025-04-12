@@ -59,20 +59,20 @@ class SaveG5MembersJob implements ShouldQueue
             return;
         }
 
-        $balance = $customer['Debt'] < 0 ? abs($customer['Debt']) : -1 * abs($customer['Debt']);
-        $this->user->store([
-            'g5_id' => $customer['CustomerID'],
-            'firstname' => $customer['CustomerName'],
-            'lastname' => $customer['FamilyName'],
-            'phone' => $customer['Mobile'] != '' ? $customer['Mobile'] : $customer['Phone'],
-            'gender' => ucfirst($customer['Sex']),
-            'marital_status' => ($customer['MartialStatus']) ? ucfirst($customer['MartialStatus']) : 'Single',
-            'address' => $customer['Street'] . ' ' .  $customer['City'] . ' ' . $customer['State'],
-            'photo' => "https://lagos-jetski-files.s3.us-east-2.amazonaws.com/ljs-placeholder.png",
-            'dob' => Carbon::parse($customer['BirthDay'])->format('Y-m-d'),
-            'email' => $email,
-            'other_emails' => $other_emails,
-            'membership_id' => "NULL"
-        ], $balance);
+        // $balance = $customer['Debt'] < 0 ? abs($customer['Debt']) : -1 * abs($customer['Debt']);
+        // $this->user->store([
+        //     'g5_id' => $customer['CustomerID'],
+        //     'firstname' => $customer['CustomerName'],
+        //     'lastname' => $customer['FamilyName'],
+        //     'phone' => $customer['Mobile'] != '' ? $customer['Mobile'] : $customer['Phone'],
+        //     'gender' => ucfirst($customer['Sex']),
+        //     'marital_status' => ($customer['MartialStatus']) ? ucfirst($customer['MartialStatus']) : 'Single',
+        //     'address' => $customer['Street'] . ' ' .  $customer['City'] . ' ' . $customer['State'],
+        //     'photo' => "https://lagos-jetski-files.s3.us-east-2.amazonaws.com/ljs-placeholder.png",
+        //     'dob' => Carbon::parse($customer['BirthDay'])->format('Y-m-d'),
+        //     'email' => $email,
+        //     'other_emails' => $other_emails,
+        //     'membership_id' => "NULL"
+        // ], $balance);
     }
 }

@@ -16,9 +16,14 @@ use Illuminate\Support\Facades\Schedule;
 //     $repo = new MemberRepository(new User());
 //     $repo->fetch_g5_customers();
 // })->twiceDaily();
-
-Schedule::call(function(){
-    $sparkle = new SparkleController(new \App\Services\SparkleService());
-    $sparkle->fetch_transactions();
-    // Log::info("Fetching transactions");
-})->everyMinute();
+if(env('APP_ENV') == 'production'){
+    Schedule::call(function(){
+        $sparkle = new SparkleController(new \App\Services\SparkleService());
+        $sparkle->fetch_transactions();
+    })->everyFifteenMinutes();
+} else {
+    Schedule::call(function(){
+        $sparkle = new SparkleController(new \App\Services\SparkleService());
+        $sparkle->fetch_transactions();
+    })->everyTwoMinutes();
+}
