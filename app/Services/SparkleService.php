@@ -20,7 +20,7 @@ class SparkleService
     public function __construct()
     {
         $this->base_url = config('sparkle.api_credentials.base_url');
-        $this->token = Cache::remember('sparkle_token', 1200, function(){
+        $this->token = Cache::remember('sparkle_token', 60, function(){
             $result = $this->login();
             return $result['data']['access_token'];
         });
@@ -102,10 +102,14 @@ class SparkleService
         $webhook = SparkleWebhook::create([
             'data' => json_encode($data),
         ]);
-        if(!array_key_exists('customer_id', $data)){
+        if($data['event'] != "transaction.credit.successful"){
             return false;
         }
-        if(empty($user = User::where('sparkle_id', $data['customer_id'])->first())){
+        if(!isset($data['beneficiary_account_number']) or empty($data['beneficiary_account_number'])){
+            return false;
+        }
+
+        if(empty($user = User::where('account_number', $data['beneficiary_account_number'])->first())){
             return false;
         }
 
@@ -125,15 +129,36 @@ class SparkleService
                 'payment_processor' => 'SPARKLE',
                 'external_reference' => $data['external_reference']
             ]);
-        }
-        $wallet->balance += $data['amount'];
-        $wallet->save();
-        $response = $g5->payByCustomer($trans, $user->g5_id);
-        $trans->update(['is_user_credited' => true]);
-        $webhook->g5_response = $response;
-        $webhook->save();
 
-        $user->name = $user->firstname;
-        Mail::to($user)->send(new CreditNotificationMail($user->name, $user->account_number, $data['amount'], $wallet->balance));
+            if(empty($user->g5_id)){
+                return false;
+            }
+
+            if(!$response = $g5->payByCustomer($trans, $user->g5_id)){
+                return false;
+            }
+
+            $wallet->balance += $data['amount'];
+            $wallet->save();
+            $trans->update(['is_user_credited' => true]);
+            $webhook->g5_response = $response;
+            $webhook->save();
+
+            $user->name = $user->firstname;
+            Mail::to($user)->send(new CreditNotificationMail($user->name, $user->account_number, $data['amount'], $wallet->balance));
+        } elseif($trans->is_user_credited == false){
+            if(empty($user->g5_id)){
+                return false;
+            }
+            if(!$response = $g5->payByCustomer($trans, $user->g5_id)){
+                return false;
+            }
+
+            $wallet->balance += $data['amount'];
+            $wallet->save();
+            $trans->update(['is_user_credited' => true]);
+            $webhook->g5_response = $response;
+            $webhook->save();
+        }
     }
 }

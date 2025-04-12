@@ -20,5 +20,5 @@ use Illuminate\Support\Facades\Schedule;
 Schedule::call(function(){
     $sparkle = new SparkleController(new \App\Services\SparkleService());
     $sparkle->fetch_transactions();
-    Log::info("Fetching transactions");
+    // Log::info("Fetching transactions");
 })->everyMinute();
