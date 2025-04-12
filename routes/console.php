@@ -20,7 +20,7 @@ if(env('APP_ENV') == 'production'){
     Schedule::call(function(){
         $sparkle = new SparkleController(new \App\Services\SparkleService());
         $sparkle->fetch_transactions();
-    })->everyFifteenMinutes();
+    })->everyFiveMinutes();
 } else {
     Schedule::call(function(){
         $sparkle = new SparkleController(new \App\Services\SparkleService());
