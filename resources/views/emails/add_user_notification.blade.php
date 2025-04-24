@@ -26,6 +26,9 @@
                         You have just been added as a member on the Lagos Jetski Application. <br /> Please proceed to download the Mobile App on your device and follow the below steps
                     </p>
                     <ul>
+                      <li>Download the Jetski Mobile App from <span><a href="https://play.google.com/store/apps/details?id=com.jetskilagos.api">
+                        <img src="{{ asset('logo/playstore.png') }}" alt="Google Play Store" style="width:50px; height:auto">
+                      </a></span></li>
                       <li>Click on the Signup Button</li>
                       <li>Provide this as Email: <strong>{{ $email }}</strong></li>
                       <li>Provide this as Pin: <strong>{{ $token }}</strong></li>
