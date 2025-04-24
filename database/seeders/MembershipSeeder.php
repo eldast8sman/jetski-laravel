@@ -2,7 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Http\Controllers\Admin\MembershipTypeController;
+use App\Models\MembershipType;
 use App\Models\Product;
+use App\Repositories\MembershipTypeRepository;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Factory;
@@ -15,47 +18,20 @@ class MembershipSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = Factory::create();
-        $faker->addProvider(new FakerPicsumImagesProvider($faker));
+        $repo = new MembershipTypeRepository(new MembershipType());
+        $types = file_get_contents(base_path('/data/membership_types.json'));
+        $types = json_decode($types, true);
 
-        Product::create([
-            'uuid' => $faker->uuid(),
-            'name' => "JetSki",
-            'description' => "Jetski across the ocean",
-            'amount' => "1000000",
-            'available' => true,
-            'category' => 'Infrastructure',
-            'photo' => $faker->imageUrl()
+        foreach($types as $type){
+          $found = $repo->findFirstBy([
+              'name' => $type['name']
           ]);
-      
-          Product::create([
-            'uuid' => $faker->uuid(),
-            'name' => "Boat",
-            'description' => "Sail across the ocean in a boat of your own",
-            'amount' => "1000000",
-            'available' => true,
-            'category' => 'Infrastructure',
-            'photo' => $faker->imageUrl()
-          ]);
-      
-          Product::create([
-            'uuid' => $faker->uuid(),
-            'name' => "Scuba ",
-            'description' => "Curiousity got the best of you, why not go for a scuba dive",
-            'amount' => "1000000",
-            'available' => true,
-            'category' => 'Infrastructure',
-            'photo' => $faker->imageUrl()
-          ]);
-      
-          Product::create([
-            'uuid' => $faker->uuid(),
-            'name' => "Social",
-            'description' => "Enjoy the scenary of the ocean, and not the ocean itself, sit back, relax, and have a good time",
-            'amount' => "1000000",
-            'available' => true,
-            'category' => 'Infrastructure',
-            'photo' => $faker->imageUrl()
-          ]);
+
+          if(empty($found)){
+              $repo->store($type);
+          } else {
+              $repo->update($found->id, $type);
+          }
+      }
     }
 }
