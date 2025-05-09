@@ -28,7 +28,7 @@ class StoreJetskiEventRequest extends FormRequest
             'date_time' => 'required|string',
             // 'date_time.*.date' => 'required|date',
             // 'date_time.*.time' => 'required|date_format:H:i',
-            'location_type' => 'required|string|in:Virtual,Physical',
+            // 'location_type' => 'required|string|in:Virtual,Physical',
             'location' => 'required|string',
             'longitude' => 'nullable|string',
             'latitude' => 'nullable|string',

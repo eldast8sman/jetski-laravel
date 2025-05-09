@@ -61,7 +61,7 @@ class JetskiEventRepository extends AbstractRepository implements JetskiEventRep
 
     public function store(Request $request)
     {
-        $all = $request->except(['photo', 'tickets_pricing']);       
+        $all = $request->except(['photo', 'tickets_pricing', 'location_type']);       
 
         $all['tickets_pricing'] = !empty($request->tickets_pricing) ? $this->sort_ticketing(json_decode($request->tickets_pricing, true)) : "";
 
@@ -73,6 +73,7 @@ class JetskiEventRepository extends AbstractRepository implements JetskiEventRep
 
         $all['uuid'] = Str::uuid().' '.time();
         $all['details'] = $all['event_title'].' '.$all['description'];
+        $all['location_type'] = 'Physical';
         $event = $this->create($this->sort_date($all));
         return $event;
     }
