@@ -31,7 +31,7 @@ class JetskiEvent extends Model
 
     public function bookings()
     {
-        return $this->hasMany(JetskiEventBooking::class, 'jetski_event_id', 'id');
+        return $this->hasMany(JetskiEventBooking::class, 'jetski_event_id', 'id')->with('user');
     }
 
     public function tickets(){

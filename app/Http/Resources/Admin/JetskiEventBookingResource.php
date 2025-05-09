@@ -24,12 +24,19 @@ class JetskiEventBookingResource extends JsonResource
                 'total_price' => $ticket['total_price']
             ];
         }
+        $user = $this->user;
         return [
             'uuid' => $this->uuid,
             'booking_reference' => $this->booking_reference,
             'total_amount' => $this->total_amount,
             'total_quantity' => $this->total_quantity,
-            'ticket_details' => $tickets
+            'ticket_details' => $tickets,
+            'user' => [
+                'uuid' => $user->uuid,
+                'firstname' => $user->firstname,
+                'lastname' => $user->lastname,
+                'photo' => $user->photo
+            ]
         ];
     }
 }
