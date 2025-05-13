@@ -55,7 +55,7 @@ class SaveG5MembersJob implements ShouldQueue
             if(empty($user->g5_id)){
                 $user->update(['g5_id' => $customer['CustomerID']]);
             }
-            $user->wallet()->update(['balance' => $customer['Debt'] < 0 ? abs($customer['Debt']) : -1 * abs($customer['Debt'])]);
+            $user->wallet()->update(['balance' => $customer['Debt'] <= 0 ? abs($customer['Debt']) : -1 * abs($customer['Debt'])]);
             return;
         }
 
