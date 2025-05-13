@@ -25,7 +25,7 @@ class UserResource extends JsonResource
             'address' => $this->address,
             'marital_status' => $this->marital_status,
             'account_number' => $this->account_number,
-            'wallet' => $this->wallet()->first(['uuid', 'balance']),
+            'wallet' => new WalletDetailsResource($this),
             'membership' => $this->membership ? $this->membership->name : null,
             'membership_information' => $this->membership_information,
             'employment_details' => $this->employment_detail,
