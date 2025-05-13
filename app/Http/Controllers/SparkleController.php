@@ -47,6 +47,7 @@ class SparkleController extends Controller
             $end_date = Carbon::now('Africa/Lagos')->format('Y-m-d');
         }
         $transactions = $this->sparkle->getTransactions($start_date, $end_date);
+        $transactions['environment'] = env('APP_ENV');
         return $transactions;
         // if(empty($transactions)){
         //     return $this->failed_response("No Pending Transaction yet");
