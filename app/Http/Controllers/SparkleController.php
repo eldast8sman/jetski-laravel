@@ -47,27 +47,28 @@ class SparkleController extends Controller
             $end_date = Carbon::now('Africa/Lagos')->format('Y-m-d');
         }
         $transactions = $this->sparkle->getTransactions($start_date, $end_date);
-        if(empty($transactions)){
-            return $this->failed_response("No Pending Transaction yet");
-        }
+        return $transactions;
+        // if(empty($transactions)){
+        //     return $this->failed_response("No Pending Transaction yet");
+        // }
         
-        foreach($transactions['data'] as $transaction){
-            if($transaction['type'] != 'Credit'){
-                continue;
-            }
-            dispatch(new  SaveSparkleTransactionJob($transaction));
-        }
+        // foreach($transactions['data'] as $transaction){
+        //     if($transaction['type'] != 'Credit'){
+        //         continue;
+        //     }
+        //     dispatch(new  SaveSparkleTransactionJob($transaction));
+        // }
 
-        if(empty($tracker)){
-            TransactionTracker::create([
-                'last_sync' => Carbon::now('Africa/Lagos')->format('Y-m-d')
-            ]);
-        } else {
-            $tracker->last_sync = Carbon::now('Africa/Lagos')->format('Y-m-d');
-            $tracker->save();
-        }
+        // if(empty($tracker)){
+        //     TransactionTracker::create([
+        //         'last_sync' => Carbon::now('Africa/Lagos')->format('Y-m-d')
+        //     ]);
+        // } else {
+        //     $tracker->last_sync = Carbon::now('Africa/Lagos')->format('Y-m-d');
+        //     $tracker->save();
+        // }
 
-        return $this->success_response("Transactions Update in Progress");
+        // return $this->success_response("Transactions Update in Progress");
     
     }
 
