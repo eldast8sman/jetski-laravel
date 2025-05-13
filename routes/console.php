@@ -16,12 +16,12 @@ use Illuminate\Support\Facades\Schedule;
 //     $repo = new MemberRepository(new User());
 //     $repo->fetch_g5_customers();
 // })->twiceDaily();
-if(env('APP_ENV') == 'production'){
+// if(env('APP_ENV') == 'production'){
     Schedule::call(function(){
         $sparkle = new SparkleController(new \App\Services\SparkleService());
         $sparkle->fetch_transactions();
     })->everyTwoMinutes();
-} 
+// } 
 // else {
 //     Schedule::call(function(){
 //         $sparkle = new SparkleController(new \App\Services\SparkleService());
