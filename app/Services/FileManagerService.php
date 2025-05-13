@@ -65,9 +65,9 @@ class FileManagerService
         if(empty($file)){
             return false;
         }
-        if(!Storage::disk($file->disk)->exists($file->path)){
-            return false;
-        }
+        // if(!Storage::disk($file->disk)->exists($file->path)){
+        //     return false;
+        // }
 
         Storage::disk($file->disk)->delete($file->path);
 
