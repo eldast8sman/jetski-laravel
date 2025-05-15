@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class G5PosService
 {
@@ -127,6 +128,10 @@ class G5PosService
 
     private function response_handler($response){
         if ($response->failed()) {
+            Log::error('G5PosService error response:', [
+                'status' => $response->status(),
+                'body' => $response->json(),
+            ]);
             return $response->throw()->json();
         }
     
