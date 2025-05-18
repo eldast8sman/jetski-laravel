@@ -53,7 +53,7 @@ class SaveSparkleTransactionJob implements ShouldQueue
             'external_reference' => $transaction['external_reference']
         ]);
         if(!empty($user->g5_id)){
-            // $response = (env('APP_ENV') == 'production') ? $this->g5->payByCustomer($trans, $user->g5_id) : true;
+            // $response = (env('APP_ENV') == 'production') ? $this->g5->payByCustomer($trans, $user->g5_id) : true;   
             $response = $this->g5->payByCustomer($trans, $user->g5_id);
             if($response){
                 $trans->update(['is_user_credited' => true]);
