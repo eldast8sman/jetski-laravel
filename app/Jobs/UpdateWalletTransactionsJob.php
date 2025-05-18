@@ -33,7 +33,8 @@ class UpdateWalletTransactionsJob implements ShouldQueue
         $wallet = $this->transaction->wallet()->first();
         $user = $wallet->user()->first();
         if(!empty($user->g5_id)){
-            $response = (env('APP_ENV') == 'production') ? $this->g5->payByCustomer($this->transaction, $user->g5_id) : true;
+            // $response = (env('APP_ENV') == 'production') ? $this->g5->payByCustomer($this->transaction, $user->g5_id) : true;
+            $response = $this->g5->payByCustomer($this->transaction, $user->g5_id);
             if($response){
                 $this->transaction->update(['is_user_credited' => true]);
                 $wallet->balance += $this->transaction->amount;
