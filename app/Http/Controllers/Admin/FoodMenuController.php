@@ -56,7 +56,7 @@ class FoodMenuController extends Controller
         $search = $request->has('search') ? (string)$request->search: "";
         $menus = $this->menu->index($screen_uuid, $limit, $search);
         if(!$menus){
-            return $this->failed_response($this->menu->errors);
+            return $this->failed_response($this->menu->errors ?? $this->menu->error_msg);
         }
         return $this->success_response('Food Menu fetched successfully', AllFoodMenuResource::collection($menus)->response()->getData(true));
     }
@@ -72,6 +72,16 @@ class FoodMenuController extends Controller
             return $this->failed_response("No New Food Menu for this Screen", 404);
         }
         return $this->success_response("Food Menu fetched successfully", AllFoodMenuResource::collection($menus)->response()->getData(true));
+    }
+
+    public function deleted_menu(Request $request, $screen_uuid){
+        $limit = $request->has('limit') ? (int)$request->limit : 10;
+        $search = $request->has('search') ? (string)$request->search: "";
+        $menus = $this->menu->deleted_index($screen_uuid, $limit, $search);
+        if(!$menus){
+            return $this->failed_response($this->menu->errors);
+        }
+        return $this->success_response('Deleted Food Menu fetched successfully', AllFoodMenuResource::collection($menus)->response()->getData(true));
     }
 
     public function add_ons(Request $request){
@@ -114,5 +124,13 @@ class FoodMenuController extends Controller
 
         $fees = $this->menu->delivery_fees($limit, $search);
         return $this->success_response('Delivery Fees fetched successfully', DeliveryFeeResource::collection($fees)->response()->getData(true));
+    }
+
+    public function deletion($uuid){
+        if(!$this->menu->is_delete($uuid)){
+            return $this->failed_response($this->menu->errors, 400);
+        }
+
+        return $this->success_response('Operation successful');
     }
 }

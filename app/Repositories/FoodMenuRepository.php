@@ -34,6 +34,7 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
             $screen_id = 1;
         }
         $criteria = [
+            ['is_deleted', '=', 0],
             ['is_stand_alone', '=', 1],
             ['parent_id', '=', $screen_id]
         ];
@@ -46,6 +47,32 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
         ];
         $menus = $this->findBy($criteria, $orderBy, $limit);
         return $menus;
+    }
+
+    public function deleted_index($screen_uuid = 1, $limit = 10, $search = "")
+    {
+        if($screen_uuid != 1){
+            $screen = $this->findByUuid($screen_uuid);
+            if(empty($screen) or ($screen->type != 'screen')){
+                $this->errors = "Wrong screen";
+                return false;
+            }
+            $screen_id = $screen->g5_id;
+        } else {
+            $screen_id = 1;
+        }
+
+        $criteria = [
+            ['is_deleted', '=', 1],
+            ['is_stand_alone', '=', 1],
+            ['parent_id', '=', $screen_id]
+        ];
+
+        if(!empty($search)){
+            $criteria[] = ['name', 'like', '%'.$search.'%'];
+        }
+
+        return $this->findBy($criteria, [['name', 'asc']], $limit);
     }
 
     public function user_index($screen_slug=1, $limit = 10, $search = "")
@@ -83,6 +110,7 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
         }
 
         $data = [
+            ['is_deleted', '=', 0],
             ['is_new', '=', 1],
             ['parent_id', '=', $screen_id]
         ];
@@ -100,6 +128,7 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
     public function fetch_add_ons(string $search="")
     {
         $data = [
+            ['is_deleted', '=', 0],
             ['is_add_on', '=', 1]
         ];
         if(!empty($search)){
@@ -181,6 +210,22 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
         $menu = $this->findFirstBy(['uuid' => $uuid]);
         $data = [
             'availability' => ($menu->availability == 0) ? 1 : 0
+        ];
+        $menu = $this->update($menu->id, $data);
+
+        return $menu;
+    }
+
+    public function is_delete(string $uuid)
+    {
+        $menu = $this->findFirstBy(['uuid' => $uuid]);
+        if(empty($menu)){
+            $this->errors = "No Menu found";
+            return false;
+        }
+
+        $data = [
+            'is_deleted' => ($menu->is_deleted == 0) ? 1 : 0
         ];
         $menu = $this->update($menu->id, $data);
 

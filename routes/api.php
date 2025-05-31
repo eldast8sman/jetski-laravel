@@ -104,10 +104,12 @@ Route::prefix('admin')->group(function(){
             Route::post('/', 'refresh_menu')->name('foodMenu.refresh');
             Route::get('/screen/{screen_uuid}', 'index')->name('foodMenu.index');
             Route::get('/menu/new/{screen_uuid}', 'new_menu')->name('foodMenu.newMenu');
+            Route::get('/menu/deleted/{screen_uuid}', 'deleted_menu')->name('foodMenu.deletedMenu');
             Route::get('/menu/add-ons', 'add_ons')->name('foodMenu.addOns.index');
             Route::get('/menu/delivery-fees', 'delivery_fees')->name('foodMenu.delivery_fees.index');
             Route::get('/{uuid}', 'show')->name('foodMenu.show');
             Route::post('/{uuid}', 'update')->name('foodMenu.update')->name('foodMenu.update');
+            Route::get('/{uuid}/deletion', 'deletion')->name('foodMenu.deletion');
             Route::get('/{uuid}/availability', 'availability')->name('foodMenu.availability');
             Route::delete('delete-photo/{uuid}', 'delete_photo');
         });
