@@ -22,7 +22,8 @@ class AllFoodMenuResource extends JsonResource
             'category' => new MenuCategoryResource($this->category),
             'photo' => ($this->photos()->count() > 0) ? $this->photos()->first()->file_manager->url : null,
             'type' => $this->type,
-            'availability' => $this->availability
+            'availability' => $this->availability,
+            'is_deleted' => $this->is_deleted
         ];
     }
 }

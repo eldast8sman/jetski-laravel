@@ -64,6 +64,12 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
             }
         }
 
+        $item_count = $cart->order_cart_items->count();
+        if($item_count < 1){
+            $errors[] = "You must add at least one valid/available item to the order";
+            $cart->delete();
+        }
+
         if(!empty($errors)){
             $this->errors = $errors;
             return false;

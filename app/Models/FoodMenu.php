@@ -33,6 +33,7 @@ class FoodMenu extends Model
         'parent_id',
         'modifier_id',
         'is_stand_alone',
+        'is_deleted',
         'is_add_on',
         'add_ons',
         'is_new',
@@ -115,7 +116,7 @@ class FoodMenu extends Model
     public function scopeIsValid($query){
         $today = Carbon::today('Africa/Lagos');
 
-        return $query->where('availability', 1)
+        return $query->where('availability', 1)->where('is_deleted', 0)
             ->where(function ($subQuery) use ($today) {
                 $subQuery->whereNull('shelf_life_from')
                          ->orWhere('shelf_life_from', '<=', $today);

@@ -91,6 +91,7 @@ class AbstractRepository implements AbstractRepositoryInterface
     
             return $data;
         } catch(Exception $e){
+            $this->error_msg = $e->getMessage();
             return false;
         }
     }

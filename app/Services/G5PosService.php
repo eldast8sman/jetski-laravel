@@ -151,9 +151,9 @@ class G5PosService
     public function payByCustomer(WalletTransaction $trans, int $user_id)
     {
       $data = [
-        'BranchID' => $this->branch_id,
-        'CustomerID' => $user_id,
-        'Amount' => $trans->amount,
+        'BranchID' => (int)$this->branch_id,
+        'CustomerID' => (int)$user_id,
+        'Amount' => (float)$trans->amount,
         'PayDate' => $trans->created_at,
         'PayTypeId' => 28
       ];
