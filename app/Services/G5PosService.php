@@ -126,6 +126,18 @@ class G5PosService
       return json_decode($this->response_handler($response), true);
     }
 
+    public function orderNumber($type="Delivery")
+    {
+      if($type == "Delivery"){
+        $order = 2;
+      } elseif($type == "Take Out"){
+        $order = 3;
+      } else {
+        return false;
+      }
+      $response = Http::withToken($this->token)->get("{$this->base_url}/PosOrder/GetLastOrderNumber/{$order}");
+    }
+
     private function response_handler($response){
         if ($response->failed()) {
             Log::error('G5PosService error response:', [
