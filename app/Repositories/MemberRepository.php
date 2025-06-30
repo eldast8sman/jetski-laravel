@@ -7,6 +7,7 @@ use App\Jobs\BulkJobHandler;
 use App\Mail\AddUserNotificationMail;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\UserDeliveryAddress;
 use App\Models\Wallet;
 use App\Repositories\Interfaces\MemberRepositoryInterface;
 use App\Services\FileManagerService;
@@ -77,7 +78,16 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
         
         if(empty($user->parent_id)){
             UserRegistered::dispatch($user);   
-        }        
+        } 
+        
+        if(!empty($user->address)){
+            $repo = new UserDeliveryAddressRepository(new UserDeliveryAddress());
+            $repo->create([
+                'user_id' => $user->id,
+                'uuid' => Str::uuid().'-'.time(),
+                'address' => $user->address
+            ]);
+        }
 
         return $user;
     }

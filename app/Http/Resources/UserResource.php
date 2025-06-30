@@ -31,6 +31,7 @@ class UserResource extends JsonResource
             'employment_details' => $this->employment_detail,
             'watercraft' => $this->watercraft,
             'relationships' => $this->relations(),
+            'delivery_addresses' => DeliveryAddressResource::collection($this->delivery_address),
             'last_login' => $this->last_login,
             'prev_login' => $this->prev_login
         ];
