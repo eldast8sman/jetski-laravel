@@ -27,10 +27,12 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RelativeController;
 use App\Http\Controllers\SparkleController;
+use App\Http\Controllers\UserDeliveryAddressController;
 use App\Http\Controllers\WalletController;
 use App\Services\G5PosService;
 use App\Services\SparkleService;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -255,6 +257,11 @@ Route::prefix('user')->group(function(){
         });
 
         Route::get('/', [DashboardController::class, 'index'])->name('userDashboard');
+
+        Route::controller(UserDeliveryAddressController::class)->prefix('delivery-address')->group(function(){
+            Route::put('/{uuid}', 'update')->name('user.deliveryAddress.update');
+            Route::delete('/{uuid}', 'destroy')->name('user.deliveryAddress.delete');
+        });
     });
 });
 
@@ -267,3 +274,4 @@ Route::get('/g5-menu', [MenuController::class, 'store_g5_menu']);
 Route::get('/sparkle/login', [SparkleService::class, 'login']);
 Route::get('/user-g5-orders/{user_id}', [ControllersAuthController::class, 'get_user_g5_orders']);
 Route::get('/store-test-user', [MembershipController::class, 'add_test_user']);
+Route::get('set-addresses', [UserDeliveryAddressController::class, 'set_address'])->name('user.deliveryAddress.setAddresses');

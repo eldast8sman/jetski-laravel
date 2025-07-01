@@ -8,10 +8,9 @@ use App\Models\OrderCart;
 use App\Models\OrderCartItem;
 use App\Models\OrderTracker;
 use App\Models\User;
-use App\Models\Wallet;
+use App\Models\UserDeliveryAddress;
 use App\Models\WalletTransaction;
 use App\Repositories\Interfaces\OrderCartRepositoryInterface;
-use App\Services\AuthService;
 use App\Services\G5PosService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -80,6 +79,13 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
 
         $this->track_order($cart, 'Pending', $cart->order_by_type, $cart->order_by_id);
 
+        if($data['new_address'] == 'yes' and isset($data['delivery_address']) and !empty($data['delivery_address'])){
+            $user->delivery_address()->create([
+                'uuid' => Str::uuid().'-'.time(),
+                'address' => $data['delivery_address'],
+            ]);
+        }
+
         return $this->find($cart->id);        
     }
 
@@ -124,6 +130,15 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
 
         $order->open = 0;
         $order->save();
+
+        if($data['new_address'] == 'yes' and isset($data['delivery_address']) and !empty($data['delivery_address'])){
+            $repo = new UserDeliveryAddressRepository(new UserDeliveryAddress());
+            $repo->create([
+                'user_id' => $order->user_id,
+                'uuid' => Str::uuid().'-'.time(),
+                'address' => $data['delivery_address'],
+            ]);
+        }
 
         return $this->find($order->id);
     }
@@ -187,7 +202,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
 
         $g5 = new G5PosService();
         $employee_code = config('g5pos.api_credentials.order_employee_code');
-        $getNumber = $g5->getOrderNumber();
+        $getNumber = $g5->orderNumber($order->order_type);
         $orderNumber = $getNumber[0]['OrderNumber'];
 
         $user = $order->user;
@@ -195,13 +210,22 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
             $user = User::find($user->parent_id);
         }
 
+        if($order->order_type == "Delivery"){
+            $order_number = 2;   
+        } elseif($order->order_type == "Take Out"){
+            $order_number = 3;
+        } else {
+            $this->errors = "Invalid Order Type";
+            return false;
+        }
         $orderData = [
             'OrderNumber' => intval($orderNumber),
-            'OrderMenuID' => 2,
+            'OrderMenuID' => $order_number,
             'UserID' => intval($employee_code),
             'CustomerID' => intval($user->g5_id)
         ];
 
+        
         $orderId = $g5->newOrder($orderData);
 
         $sel_items = [];

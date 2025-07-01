@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\EmploymentDetail;
+use App\Models\UserDeliveryAddress;
 use App\Repositories\Interfaces\EmploymentDetailRepositoryInterface;
 use Illuminate\Support\Str;
 
@@ -22,6 +23,15 @@ class EmploymentDetailRepository extends AbstractRepository implements Employmen
             $data['uuid'] = Str::uuid().'-'.time();
 
             $info = $this->create($data);
+
+            if(!empty($data['address'])){
+                $repo = new UserDeliveryAddressRepository(new UserDeliveryAddress());
+                $repo->create([
+                    'user_id' => $info->user_id,
+                    'uuid' => Str::uuid().'-'.time(),
+                    'address' => $data['address']
+                ]);
+            }
         }
 
         return $info;

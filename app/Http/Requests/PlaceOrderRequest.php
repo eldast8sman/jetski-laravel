@@ -22,8 +22,9 @@ class PlaceOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order_type' => 'required|string|in:Delivery,Take Out,Dining In',
+            'order_type' => 'required|string|in:Delivery,Take Out',
             'delivery_address' => 'required_if:order_type,Delivery|string',
+            'new_address' => 'required_if:order_type,Delivery|string|in:yes,no',
             'longitude' => 'numeric|nullable',
             'latitude' => 'numeric|nullable',
             'delivery_phone' => 'required_if:order_type,Delivery|string',

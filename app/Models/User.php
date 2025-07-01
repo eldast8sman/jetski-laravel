@@ -103,6 +103,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Wallet::class);
     }
 
+    public function delivery_address(){
+        return $this->hasMany(UserDeliveryAddress::class);
+    }
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()

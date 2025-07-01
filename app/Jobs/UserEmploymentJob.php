@@ -4,7 +4,9 @@ namespace App\Jobs;
 
 use App\Models\EmploymentDetail;
 use App\Models\User;
+use App\Models\UserDeliveryAddress;
 use App\Repositories\EmploymentDetailRepository;
+use App\Repositories\UserDeliveryAddressRepository;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Str;

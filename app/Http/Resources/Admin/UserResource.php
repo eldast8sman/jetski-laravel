@@ -36,6 +36,7 @@ class UserResource extends JsonResource
             'membership_information' => new MembershipInformationResource($this->membership_information) ?? null,
             'watercraft' => $this->watercraft ?? null,
             'employment_details' => $this->employment_detail ?? null,
+            'delivery_addresses' => DeliveryAddressResource::collection($this->delivery_address),
             'status' => $this->can_use
         ];
     }
