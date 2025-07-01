@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\Interfaces\UserDeliveryAddressRepositoryInterface;
 use App\Services\AuthService;
@@ -32,7 +33,7 @@ class UserDeliveryAddressController extends Controller
         ]);
 
         $service = new AuthService('user-api');
-        return $this->success_response("Delivery Address updated successfully", $service->logged_in_user());
+        return $this->success_response("Delivery Address updated successfully", new UserResource($service->logged_in_user()));
     }
 
     public function destroy($uuid)
@@ -49,7 +50,7 @@ class UserDeliveryAddressController extends Controller
         $address->delete();
 
         $service = new AuthService('user-api');
-        return $this->success_response("Delivery Address deleted successfully", $service->logged_in_user());
+        return $this->success_response("Delivery Address deleted successfully", new UserResource($service->logged_in_user()));
     }
 
     public function set_address(){
