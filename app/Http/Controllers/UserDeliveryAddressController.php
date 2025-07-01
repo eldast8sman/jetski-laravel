@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Repositories\Interfaces\UserDeliveryAddressRepositoryInterface;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
@@ -49,5 +50,28 @@ class UserDeliveryAddressController extends Controller
 
         $service = new AuthService('user-api');
         return $this->success_response("Delivery Address deleted successfully", $service->logged_in_user());
+    }
+
+    public function set_address(){
+        $users = User::all();
+        foreach($users as $user){
+            if(!empty($user->address)){
+                $user->delivery_address()->create([
+                    'uuid' => \Illuminate\Support\Str::uuid().'-'.time(),
+                    'address' => $user->address,
+                ]);
+            }
+
+            if(!empty($employment = $user->employment_detail)){
+                if(!empty($employment->address)){
+                    $user->delivery_address()->create([
+                        'uuid' => \Illuminate\Support\Str::uuid().'-'.time(),
+                        'address' => $employment->address,
+                    ]);
+                }
+            }
+        }
+
+        return "Delivery Addresses set successfully for all users.";
     }
 }

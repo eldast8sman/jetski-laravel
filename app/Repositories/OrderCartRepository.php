@@ -8,6 +8,7 @@ use App\Models\OrderCart;
 use App\Models\OrderCartItem;
 use App\Models\OrderTracker;
 use App\Models\User;
+use App\Models\UserDeliveryAddress;
 use App\Models\WalletTransaction;
 use App\Repositories\Interfaces\OrderCartRepositoryInterface;
 use App\Services\G5PosService;
@@ -129,6 +130,15 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
 
         $order->open = 0;
         $order->save();
+
+        if($data['new_address'] == 'yes' and isset($data['delivery_address']) and !empty($data['delivery_address'])){
+            $repo = new UserDeliveryAddressRepository(new UserDeliveryAddress());
+            $repo->create([
+                'user_id' => $order->user_id,
+                'uuid' => Str::uuid().'-'.time(),
+                'address' => $data['delivery_address'],
+            ]);
+        }
 
         return $this->find($order->id);
     }
