@@ -54,8 +54,16 @@ class G5PosService
       $data['DeliveryDriverEmpID'] = 0;
       $data['AgentID'] = 0;
       $data['DeliveryStatus'] = 0;
+
+      if($data['OrderMenuId'] == 2){
+        $route = "NewDeliveryOrder";
+      } elseif($data['OrderMenuId'] == 3){
+        $route = "NewOrder";
+      } else {
+        return false;
+      }
   
-      $response = Http::withToken($this->token)->post("{$this->base_url}/PosOrder/NewDeliveryOrder", $data);
+      $response = Http::withToken($this->token)->post("{$this->base_url}/PosOrder/{$route}", $data);
       
       return json_decode($this->response_handler($response), true);
     }
@@ -136,6 +144,8 @@ class G5PosService
         return false;
       }
       $response = Http::withToken($this->token)->get("{$this->base_url}/PosOrder/GetLastOrderNumber/{$order}");
+
+      return json_decode($this->response_handler($response), true);
     }
 
     private function response_handler($response){

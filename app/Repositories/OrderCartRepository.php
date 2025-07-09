@@ -79,11 +79,13 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
 
         $this->track_order($cart, 'Pending', $cart->order_by_type, $cart->order_by_id);
 
-        if($data['new_address'] == 'yes' and isset($data['delivery_address']) and !empty($data['delivery_address'])){
-            $user->delivery_address()->create([
-                'uuid' => Str::uuid().'-'.time(),
-                'address' => $data['delivery_address'],
-            ]);
+        if($cart->order_type == 'Delivery'){
+            if($data['new_address'] == 'yes' and isset($data['delivery_address']) and !empty($data['delivery_address'])){
+                $user->delivery_address()->create([
+                    'uuid' => Str::uuid().'-'.time(),
+                    'address' => $data['delivery_address'],
+                ]);
+            }
         }
 
         return $this->find($cart->id);        
