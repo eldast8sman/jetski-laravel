@@ -45,6 +45,12 @@ class StoreFoodMenuJob implements ShouldQueue
         if((strtolower($data['DisplayName']) == 'add on') or (strtolower(substr($data['DisplayName'], 0, 4)) == 'add ')){
             $return['is_add_on'] = 1;
         }
+        if(strpos(strtolower($data['DisplayName']), 'delivery') !== false){
+            $return['is_delivery_fee'] = 1;
+            $return['is_new'] = 0;
+        } else {
+            $return['is_delivery_fee'] = 0;
+        }
 
         return $return;
     }
@@ -63,7 +69,12 @@ class StoreFoodMenuJob implements ShouldQueue
     
             $found = $repo->findFirstBy(['g5_id' => $this->data['ItemID']]);
             if(!empty($found)){
-                $repo->update($found->id, ['amount' => $this->data['PriceMode1']]);
+                $update_data = ['amount' => $this->data['PriceMode1']];
+                if(strpos(strtolower($this->data['DisplayName']), 'delivery') !== false){
+                    $update_data['is_delivery_fee'] = 1;
+                    $update_data['is_new'] = 0;
+                }
+                $repo->update($found->id, $update_data);
             } else {
                 $data = $this->prep_data($this->data);
                 $repo->create($data);
