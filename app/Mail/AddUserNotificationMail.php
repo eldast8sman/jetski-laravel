@@ -33,6 +33,7 @@ class AddUserNotificationMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: 'support@jetskilagos.com.ng',
             subject: 'Membership Registration',
         );
     }

@@ -31,6 +31,7 @@ class AddAdminNotificationMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: 'support@jetskilagos.com.ng',
             subject: 'Addition as Admin',
         );
     }
