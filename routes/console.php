@@ -12,10 +12,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schedule;
 
 
-// Schedule::call(function(){
-//     $repo = new MemberRepository(new User());
-//     $repo->fetch_g5_customers();
-// })->twiceDaily();
+Schedule::call(function(){
+    $repo = new MemberRepository(new User());
+    $repo->fetch_g5_customers();
+})->cron('0 */6 * * *')->withoutOverlapping();
 // if(env('APP_ENV') == 'production'){
     Schedule::call(function(){
         $sparkle = new SparkleController(new \App\Services\SparkleService());
