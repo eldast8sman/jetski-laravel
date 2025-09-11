@@ -34,7 +34,7 @@ class DashboardController extends Controller
 
         return $this->success_response("Dashboard Details fetched", [
             'account_number' => $user->account_number ?? null,
-            'balance' => $wallet ? new WalletResource($user) : null,
+            'balance' => $wallet ? new WalletResource($wallet) : null,
             'announcements' => AnnouncementResource::collection($announcements)
         ]);
     }
