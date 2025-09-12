@@ -27,7 +27,7 @@ class BulkJobHandler implements ShouldQueue
     public function handle(): void
     {
         if($this->type == 'g5_members'){
-            foreacH($this->data as $data){
+            foreach($this->data as $data){
                 dispatch(new SaveG5MembersJob($data));
             }
         }
