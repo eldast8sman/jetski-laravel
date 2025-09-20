@@ -10,6 +10,7 @@ use App\Models\WalletTransaction;
 use App\Repositories\Interfaces\EventBookingRepositoryInterface;
 use App\Services\G5PosService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Stringable;
 
@@ -120,6 +121,7 @@ class EventBookingRepository extends AbstractRepository implements EventBookingR
             $g5 = new G5PosService();
             $employee_code = config('g5pos.api_credentials.order_employee_code');
             $getNumber = $g5->orderNumber("Take Out");
+            Log::info('New Order Number: '.json_encode($getNumber));
             $orderNumber = $getNumber[0]['OrderNumber'];
     
             $orderData = [
