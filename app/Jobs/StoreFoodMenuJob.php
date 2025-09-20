@@ -37,7 +37,7 @@ class StoreFoodMenuJob implements ShouldQueue
             'name' => ucwords(strtolower($data['DisplayName'])),
             'amount' => $data['PriceMode1'],
             'g5_id' => $data['ItemID'],
-            'parent_id' => $parent_id ?? $data['ParentID'],
+            'parent_id' => $this->parent_id ?? $data['ParentID'],
             'modifier_id' => $data['Modifier1'],
             'type' => ($data['ItemTypeID'] == 3) ? 'screen' : 'item'
         ];
