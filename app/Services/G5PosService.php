@@ -55,9 +55,9 @@ class G5PosService
       $data['AgentID'] = 0;
       $data['DeliveryStatus'] = 0;
 
-      if($data['OrderMenuId'] == 2){
+      if($data['OrderMenuID'] == 2){
         $route = "NewDeliveryOrder";
-      } elseif($data['OrderMenuId'] == 3){
+      } elseif($data['OrderMenuID'] == 3){
         $route = "NewOrder";
       } else {
         return false;

@@ -119,12 +119,12 @@ class EventBookingRepository extends AbstractRepository implements EventBookingR
         if(env('APP_ENV') == 'production'){
             $g5 = new G5PosService();
             $employee_code = config('g5pos.api_credentials.order_employee_code');
-            $getNumber = $g5->getOrderNumber();
+            $getNumber = $g5->orderNumber("Take Out");
             $orderNumber = $getNumber[0]['OrderNumber'];
     
             $orderData = [
                 'OrderNumber' => intval($orderNumber),
-                'OrderMenuID' => 2,
+                'OrderMenuID' => 3,
                 'UserID' => intval($employee_code),
                 'CustomerID' => intval($user->g5_id)
             ];
