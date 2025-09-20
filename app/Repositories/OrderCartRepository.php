@@ -205,6 +205,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         $g5 = new G5PosService();
         $employee_code = config('g5pos.api_credentials.order_employee_code');
         $getNumber = $g5->orderNumber($order->order_type);
+        Log::info('New Order Number: '.json_encode($getNumber));
         $orderNumber = $getNumber[0]['OrderNumber'];
 
         $user = $order->user;
