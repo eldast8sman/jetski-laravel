@@ -43,6 +43,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
             'delivery_phone' => (isset($data['delivery_phone']) and !empty($data['delivery_phone'])) ? $data['delivery_phone'] : null,
             'delivery_email' => (isset($data['delivery_email']) and !empty($data['delivery_email'])) ? $data['delivery_email'] : null,
             'status' => "Pending",
+            'online_order' => 1,
             'delivery_fee_id' => ($delivery_fee == null) ? null : $delivery_fee->id,
             'delivery_amount' => ($delivery_fee == null) ? 0 : $delivery_fee->amount,
             'tip_amount' => (isset($data['tip_amount']) and !empty($data['tip_amount'])) ? $data['tip_amount'] : 0,

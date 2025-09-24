@@ -29,6 +29,7 @@ class OrderCart extends Model
         'total_amount',
         'total_quantity',
         'open',
+        'online_order',
         'order_by_type',
         'order_by_id',
         'time_ordered'
