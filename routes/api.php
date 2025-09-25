@@ -104,6 +104,7 @@ Route::prefix('admin')->group(function(){
 
         Route::controller(FoodMenuController::class)->prefix('food-menu')->group(function(){
             Route::post('/', 'refresh_menu')->name('foodMenu.refresh');
+            Route::post('/save/manual', 'store')->name('foodMenu.store');
             Route::get('/screen/{screen_uuid}', 'index')->name('foodMenu.index');
             Route::get('/menu/new/{screen_uuid}', 'new_menu')->name('foodMenu.newMenu');
             Route::get('/menu/deleted/{screen_uuid}', 'deleted_menu')->name('foodMenu.deletedMenu');
@@ -120,6 +121,7 @@ Route::prefix('admin')->group(function(){
             Route::get('/', 'index')->name('admin.orderCart.index');
             Route::post('/', 'place_order')->name('admin.orderCart.place');
             Route::get('/orders/completed', 'completed_orders')->name('admin.orderCart.completed');
+            Route::get('/orders/offline', 'offline_orders')->name('admin.orderCart.offline');
             Route::get('/{uuid}', 'show')->name('admin.orderCart.show');
             Route::post('/{uuid}/confirm', 'confirm_order')->name('admin.orderCart.confirm');
             Route::post('/{uuid}', 'modify_order')->name('admin.orderCart.modify');
@@ -229,6 +231,7 @@ Route::prefix('user')->group(function(){
             Route::get('/' , 'index')->name('user.cart.index');
             Route::get('/{uuid}', 'show')->name('user.cart.show');
             Route::get('/orders/completed', 'completed_orders')->name('user.cart.completed');
+            Route::get('/orders/offline', 'offline_orders')->name('user.cart.offline');
             Route::post('/', 'place_order')->name('user.cart.placeOrder');
             Route::post('/{uuid}', 'modify_order')->name('user.cart.modify');
         });

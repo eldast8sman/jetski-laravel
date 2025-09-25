@@ -37,6 +37,14 @@ class OrderCartController extends Controller
         return $this->success_response("Completed Orders fetched successfully", OrderCartResource::collection($orders)->response()->getData(true));
     }
 
+    public function offline_orders(Request $request){
+        $limit = $request->has('limit') ? (int)$request->limit : 10;
+
+        $orders = $this->order->user_offline_orders($limit);
+
+        return $this->success_response("Offline Orders fetched successfully", OrderCartResource::collection($orders)->response()->getData(true));
+    }
+
     public function show($uuid){
         $cart = $this->order->findFirstBy([
             'uuid' => $uuid,

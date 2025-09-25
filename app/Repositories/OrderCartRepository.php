@@ -404,6 +404,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         $criteria = [
             ['status', '!=', 'Completed'],
             ['status', '!=', 'Cancelled'],
+            ['online_order', '=', 1]
         ];
         if(!empty($search)){
             $criteria[] = ['order_number', 'like', '%'.$search.'%'];
@@ -421,11 +422,23 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         $orders = OrderCart::where(function($query){
             $query->where('status', 'Completed')
                 ->orWhere('status', 'Cancelled');
-        });
+        })->where('online_order', 1);
         if(!empty($search)){
             $orders->where('order_number', 'like', '%'.$search.'%');
         }
         $orders = $orders->orderBy('created_at', 'desc')->paginate($limit);
+        return $orders;
+    }
+
+    public function offline_orders($limit = 10, $search="`"){
+        $criteria = [
+            'online_order', '=', 0
+        ];
+        if(!empty($search)){
+            $criteria[] = ['order_number', 'like', '%'.$search.'%'];
+        }
+
+        $orders = $this->findBy($criteria, [['created_at', 'desc']], $limit);
         return $orders;
     }
 
@@ -438,6 +451,18 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
         ];
         $orderBy = [
             ['created_at', 'asc']
+        ];
+        $orders = $this->findBy($criteria, $orderBy, $limit);
+        return $orders;
+    }
+
+    public function user_offline_orders($limit = 10){
+        $criteria = [
+            ['user_id', '=', auth('user-api')->user()->id],
+            ['online_order', '=', 0]
+        ];
+        $orderBy = [
+            ['created_at', 'desc']
         ];
         $orders = $this->findBy($criteria, $orderBy, $limit);
         return $orders;

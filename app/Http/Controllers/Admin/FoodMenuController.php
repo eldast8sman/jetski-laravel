@@ -9,6 +9,7 @@ use App\Http\Resources\Admin\DeliveryFeeResource;
 use App\Http\Resources\Admin\MenuAddOnResource;
 use App\Http\Resources\Admin\SingleFoodMenuResource;
 use App\Jobs\StoreFoodMenuJob;
+use App\Jobs\StoreFoodMenuJobManul;
 use App\Repositories\Interfaces\FoodMenuRepositoryInterface;
 use App\Repositories\Interfaces\MenuCategoryRepositoryInterface;
 use App\Services\G5PosService;
@@ -49,6 +50,14 @@ class FoodMenuController extends Controller
             Log::error('Store G5 Menu: '.$e->getMessage());
             return $this->failed_response('Refresh failed. Check Logs for details');
         }
+    }
+
+    public function store(Request $request){
+        foreach($request->menus as $menu){
+            StoreFoodMenuJobManul::dispatch($menu);
+        }
+
+        return $this->success_response('Job Dispatched');
     }
 
     public function index(Request $request, $screen_uuid=1){
