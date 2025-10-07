@@ -408,7 +408,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
             ['online_order', '=', 1]
         ];
         if(!empty($search)){
-            $criteria[] = ['order_number', 'like', '%'.$search.'%'];
+            $criteria[] = ['g5_order_number', 'like', '%'.$search.'%'];
         }
         $orderBy = [
             ['created_at', 'asc']
@@ -425,19 +425,19 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
                 ->orWhere('status', 'Cancelled');
         })->where('online_order', 1);
         if(!empty($search)){
-            $orders->where('order_number', 'like', '%'.$search.'%');
+            $orders->where('g5_order_number', 'like', '%'.$search.'%');
         }
         $orders = $orders->orderBy('created_at', 'desc')->paginate($limit);
         return $orders;
     }
 
-    public function offline_orders($limit = 10, $search="`"){
+    public function offline_orders($limit = 10, $search=""){
         try {
             $criteria = [
                 ['online_order', '=', 0]
             ];
             if(!empty($search)){
-                $criteria[] = ['order_number', 'like', '%'.$search.'%'];
+                $criteria[] = ['g5_order_number', 'like', '%'.$search.'%'];
             }
 
             $orders = $this->findBy($criteria, [['created_at', 'desc']], $limit);
