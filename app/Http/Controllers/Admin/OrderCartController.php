@@ -46,7 +46,6 @@ class OrderCartController extends Controller
         if(!$orders){
             return $this->failed_response($this->order->errors, 500);
         }
-        dd($orders);
 
         return $this->success_response("Offline Orders fetched successfully", OrderCartResource::collection($orders)->response()->getData(true));
     }
