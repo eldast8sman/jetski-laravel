@@ -30,14 +30,14 @@ class OrderCartResource extends JsonResource
             'order_no' => $this->order_no,
             'order_type' => $this->order_type,
             'delivery_address' => $this->delivery_address,
-            'items' => OrderCartItemResource::collection($this->order_cart_items),
+            'items' => !empty($this->order_cart_items) ? OrderCartItemResource::collection($this->order_cart_items) : null,
             'item_amount' => $this->item_amount,
             'tip_amount' => $this->tip_amount,
             'total_quantity' => $this->total_quantity,
             'total_amount' => $this->total_amount,
             'time_ordered' => $this->time_ordered,
             'status' => $this->status,
-            'trackings' => OrderTrackerResource::collection($this->order_trackers),
+            'trackings' => !empty($this->order_trackers) ? OrderTrackerResource::collection($this->order_trackers) : "",
         ];
     }
 }
