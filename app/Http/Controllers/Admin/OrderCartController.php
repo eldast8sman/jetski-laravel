@@ -43,6 +43,7 @@ class OrderCartController extends Controller
         $limit = $request->has('limit') ? (int)$request->limit : 10;
 
         $orders = $this->order->offline_orders($limit);
+        dd($orders);
 
         return $this->success_response("Offline Orders fetched successfully", OrderCartResource::collection($orders)->response()->getData(true));
     }
