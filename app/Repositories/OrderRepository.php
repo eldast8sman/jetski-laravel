@@ -32,7 +32,7 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
                 return;
             }
 
-            $from_date = !empty($user->last_synced) ? date('Y-m-d', strtotime($user->last_synced)) : '2000-01-01';
+            $from_date = !empty($user->last_synced) ? date('Y-m-d', strtotime($user->last_synced)) : '2025-09-12';
 
             $g5_id = $user->g5_id;
             $g5 = new G5PosService();
