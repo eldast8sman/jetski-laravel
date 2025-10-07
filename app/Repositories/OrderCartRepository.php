@@ -434,7 +434,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
     public function offline_orders($limit = 10, $search="`"){
         try {
             $criteria = [
-                'online_order', '=', 0
+                ['online_order', '=', 0]
             ];
             if(!empty($search)){
                 $criteria[] = ['order_number', 'like', '%'.$search.'%'];
