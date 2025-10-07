@@ -13,6 +13,7 @@ use App\Models\WalletTransaction;
 use App\Repositories\Interfaces\OrderCartRepositoryInterface;
 use App\Services\G5PosService;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -431,15 +432,25 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
     }
 
     public function offline_orders($limit = 10, $search="`"){
-        $criteria = [
-            'online_order', '=', 0
-        ];
-        if(!empty($search)){
-            $criteria[] = ['order_number', 'like', '%'.$search.'%'];
-        }
+        try {
+            $criteria = [
+                'online_order', '=', 0
+            ];
+            if(!empty($search)){
+                $criteria[] = ['order_number', 'like', '%'.$search.'%'];
+            }
 
-        $orders = $this->findBy($criteria, [['created_at', 'desc']], $limit);
-        return $orders;
+            $orders = $this->findBy($criteria, [['created_at', 'desc']], $limit);
+            if(!$orders){
+                $this->errors = $this->error_msg;
+                return false;
+            }
+            return $orders;
+        } catch (Exception $e){
+            $this->errors = $e->getMessage();
+            return false;
+        }
+        
     }
 
     public function user_index($limit = 10)
