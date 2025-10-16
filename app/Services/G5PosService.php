@@ -49,7 +49,7 @@ class G5PosService
     public function newOrder(array $data) //Done
     {
       $data['BranchID'] = intval($this->branch_id);
-      $data['WorkStationID'] = intval($this->workstation_id);
+      $data['WorkStationID'] = 5;
       $data['NumberOfCustomers'] = 1;
       $data['DeliveryDriverEmpID'] = 0;
       $data['AgentID'] = 0;
@@ -81,7 +81,7 @@ class G5PosService
     public function saveOrder(array $data) //Done
     {
       $data['BranchID'] = intval($this->branch_id);
-      $data['Workstation'] = intval($this->workstation_id);
+      $data['WorkStationID'] = 5;
   
       $response = Http::withToken($this->token)->post("{$this->base_url}/PosOrder/SaveOrder", $data);
       return $this->response_handler($response);
