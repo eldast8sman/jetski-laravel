@@ -222,7 +222,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
             return false;
         }
         $orderData = [
-            'OrderNumber' => intval($orderNumber),
+            'OrderNumber' => intval($orderNumber) + 1,
             'OrderMenuID' => $order_number,
             'UserID' => intval($employee_code),
             'CustomerID' => intval($user->g5_id)
