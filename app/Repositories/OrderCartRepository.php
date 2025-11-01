@@ -215,7 +215,7 @@ class OrderCartRepository extends AbstractRepository implements OrderCartReposit
 
         if($order->order_type == "Delivery"){
             $order_number = 2;   
-        } elseif($order->order_type == "Take Out"){
+        } elseif($order->order_type == "Pickup"){
             $order_number = 3;
         } else {
             $this->errors = "Invalid Order Type";

@@ -56,14 +56,22 @@ class SaveOrderCartJob implements ShouldQueue
 
         if(empty($new_order = $order_repo->findByOrFirst($criteria)) and ($order['TotalPrice'] > 0)){
             preg_match('/[0-9]+/', $order['OrderingTime'], $match);
-
+            if($order['OrderMenuID'] == 1){
+                $order_type = 'Dine-In';
+            } elseif($order['OrderMenuID'] == 2){
+                $order_type = 'Delivery';
+            } elseif($order['OrderMenuID'] == 3){
+                $order_type = 'Pickup';
+            } else {
+                $order_type = 'Unknown';
+            }
             $new_order = $order_repo->create([
                 'user_id' => $this->user->id,
                 'uuid' => Str::uuid().'-'.time(),
                 'g5_id' => $order['OrderID'],
                 'g5_order_number' => $order['OrderNumber'],
                 'user_name' => $this->user->firstname.' '.$this->user->lastname,
-                'order_type' => $order['OrderMenuID'] ?? 'Delivery',
+                'order_type' => $order_type,
                 'status' => $order['DeliveryStatus'] ?? 'Completed',
                 'open' => 0,
                 'time_ordered' => Carbon::createFromTimestamp(substr($match[0], 0, -3), 'Africa/Lagos')->format('Y-m-d H:i:s'),
