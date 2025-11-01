@@ -23,7 +23,7 @@ class PlaceOrderRequest extends FormRequest
     {
         return [
             'user_id' => 'required|string|exists:users,uuid',
-            'order_type' => 'required|string|in:Delivery,Take Out',
+            'order_type' => 'required|string|in:Delivery,Pickup',
             'delivery_address' => 'required_if:order_type,Delivery|string',
             'new_address' => 'required|in:yes,no',
             'longitude' => 'numeric|nullable',
